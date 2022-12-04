@@ -1,26 +1,27 @@
-using UnityEngine;
-using System;
 using System.Collections;
+using UnityEngine;
+using VN;
 
-class HoneyPot : VN.Object
+class HoneyPot : Image
 {
     public bool PickedUp { get; set; }
     public bool Dropped  { get; set; }
-    
+
     [SerializeField] bool m_Appeared = false;
 
     public bool CanBePickedUp => m_Appeared && !PickedUp && !Dropped;
 
-    public static HoneyPot Create(string _ID, VN.Object _Parent, Vector2 _Offset)
+    public static HoneyPot Create(Node _Parent, Vector2 _Offset, string _ID)
     {
-        HoneyPot honeyPot = ResourceManager.Load<HoneyPot>("Prefabs/HoneyPot", _ID);
-        honeyPot.Create(_Parent, _Offset);
+        HoneyPot honeyPot = Utility.LoadObject<HoneyPot>("Prefabs/HoneyPot", _ID,_Parent);
+        honeyPot.Create(_Offset);
+
         return honeyPot;
     }
 
-    void Create(VN.Object _Parent, Vector2 _Offset)
+    void Create(Vector2 _Offset)
     {
-        base.Create(_Offset, _Parent);
+        base.Create(_Offset);
 
         StartCoroutine(Appear());
     }

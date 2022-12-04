@@ -1,13 +1,16 @@
 using UnityEngine;
+using VN;
 
-public class Hive : VN.Object
+public class Hive : Image
 {
     int i = 0;
 
-    public static void Create(string _ID, VN.Object _Parent, Vector2 _Offset)
+    public static Hive Create(Node _Parent, Vector2 _Offset, string _ID)
     {
-        Hive hive = ResourceManager.Load<Hive>("Prefabs/Hive", _ID);
-        hive.Create(_Offset, _Parent);
+        Hive hive = Utility.LoadObject<Hive>("Prefabs/Hive", _ID, _Parent);
+        hive.Create(_Offset);
+
+        return hive;
     }
 
     void Update()
@@ -18,10 +21,10 @@ public class Hive : VN.Object
             if (Vector2.Distance(bee.Offset, Offset) < 1 && bee.GotAPot)
             {
                 bee.DropPot(Offset);
-                Bee.Create($"bee_{i}", null, Offset, VN.Utility.RandomOffset);
+                Bee.Create(null, Offset, $"bee_{i}", VN.Utility.RandomOffset);
                 i += 1;
-                HoneyPot.Create("honey_pot", null, VN.Utility.RandomOffset);
-            } 
+                HoneyPot.Create(null, VN.Utility.RandomOffset, "honey_pot");
+            }
         }
     }
 }

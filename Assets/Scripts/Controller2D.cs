@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 
 namespace VN
 {
@@ -19,12 +19,18 @@ public class Controller2D : MonoBehaviour
     public bool A    => m_Map["a"];
     public bool S    => m_Map["s"];
     public bool D    => m_Map["d"];
+    public Action<bool>          OnChosen { get; set; }
 
     [SerializeField] bool m_Chosen;
+
     public bool Chosen
     {
         get => m_Chosen;
-        set => m_Chosen = value;
+        set
+        {
+            m_Chosen = value;
+            OnChosen?.Invoke(m_Chosen);
+        }
     }
 
     public void Update()

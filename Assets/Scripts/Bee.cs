@@ -1,53 +1,29 @@
 using UnityEngine;
 using System.Collections;
+using VN;
 
-
-class Bee : VN.Object
+class Bee : Controllable
 {
-    VN.Controller2D m_Controller;
-
-    [SerializeField] float m_Speed;
-    [SerializeField] GameObject m_Stroke;
+    [SerializeField] Image m_Stroke;
 
     HoneyPot m_Pot;
 
-    public bool GotAPot => m_Pot != null && !m_Pot.Dropped;
-    public VN.Controller2D Controller => m_Controller;
-    public GameObject      Stroke     => m_Stroke;
+    public bool            GotAPot    => m_Pot != null && !m_Pot.Dropped;
+    public Image           Stroke     => m_Stroke;
 
-    public static Bee Create(string _ID, VN.Object _Parent, Vector2 _HiveOffset, Vector2 _Offset)
+    Image[] Parts => GetComponentsInChildren<Image>(); 
+
+    public static Bee Create(Node _Parent, Vector2 _Offset, string _ID, Vector2 _FlyTo)
     {
-        Bee bee = Instantiate(Resources.Load<Bee>("Prefabs/Bee"));
-        bee.name = _ID;
-        bee.Create(_Parent, _HiveOffset, _Offset);
+        Bee bee = Utility.LoadObject<Bee>("Prefabs/Bee", _ID, _Parent);
+
+        bee.Create(_Parent, _Offset, _FlyTo);
         return bee;
     }
 
-    void Start()
+    protected override void OnUpdate()
     {
-        m_Controller = GetComponent<VN.Controller2D>();
-        m_Stroke.gameObject.SetActive(Controller.Chosen);
-    }
-
-    void OnMouseDown() 
-    {
-        Bee[] bees = FindObjectsOfType<Bee>();
-        foreach (Bee bee in bees)
-        {
-            bee.Controller.Chosen = bee.name == name;
-        }
-    }
-
-    void Update()
-    {
-        Stroke.gameObject.SetActive(m_Controller.Chosen);
-
-        if (m_Controller.Chosen)
-        {
-            Offset += m_Controller.DefaultDirectionVector * Time.deltaTime * m_Speed;
-            foreach (SpriteRenderer r in SpriteRenderers)
-                r.flipX = m_Controller.DefaultDirectionVector.x < 0;
-        }
+        base.OnUpdate();
 
         HoneyPot[] pots = FindObjectsOfType<HoneyPot>();
         foreach (HoneyPot pot in pots)
@@ -57,10 +33,10 @@ class Bee : VN.Object
         }
     }
 
-    void Create(VN.Object _Parent, Vector2 _HiveOffset, Vector2 _Offset)
+    void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo)
     {
-        base.Create(_HiveOffset, _Parent);
-        StartCoroutine(FlyToPoint(_Offset));
+        base.Create(_HiveOffset);
+        StartCoroutine(FlyToPoint(_FlyTo));
     }
 
     void PickUpPot(HoneyPot _Pot)
@@ -81,6 +57,19 @@ class Bee : VN.Object
         StartCoroutine(DropPotCoroutine(_Dest));
     }
 
+    protected override void OnPositionUpdate(Vector2 _Direction)
+    {
+        foreach (Image part in Parts)
+            part.FlipType = _Direction.x < 0 
+                ? ImageFlipType.VERTICAL
+                : ImageFlipType.NONE;
+    }
+
+    protected override void OnChosen(bool _Chosen)
+    {
+        Stroke.gameObject.SetActive(_Chosen);
+    }
+
     IEnumerator FlyToPoint(Vector2 _Dest)
     {
         Vector2 start = Offset;
@@ -96,7 +85,7 @@ class Bee : VN.Object
     {
         Vector2 start = _Pot.Offset;
         yield return Coroutines.Update(
-            () => _Pot.SetParent(this),
+            () => _Pot.SetParent(this, true),
             _Phase => { _Pot.Offset = Vector2.Lerp(start, Offset, _Phase); },
             null,
             0.2f
