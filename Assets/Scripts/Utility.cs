@@ -5,10 +5,24 @@ namespace VN
 
 public static class Utility
 {
-    public static float         Height       => Camera.main.orthographicSize * 2;
-    public static float         Width        => Height * Camera.main.aspect;
-    public static Vector2 RandomOffset       => new Vector2(Random.Range(-Width/2, Width/2), Random.Range(-Height/2, Height/2));
+    const float SCREEN_MARGIN = 0.5f;
+    public static float               Height => Camera.main.orthographicSize * 2;
+    public static float                Width => Height * Camera.main.aspect;
+    public static Vector2       RandomOffset => new Vector2(
+        Random.Range(
+                -Width/2 + SCREEN_MARGIN,
+                Width/2 - SCREEN_MARGIN
+            ),
+        Random.Range(
+                -Height/2 + SCREEN_MARGIN,
+                Height/2 - SCREEN_MARGIN
+            )
+        );
+    
+    public static Vector2 TopLeftCornerOffset => new Vector2(-Width/2 + SCREEN_MARGIN, Height/2 - SCREEN_MARGIN);
+
     public static Vector2 MousePositionWorld => (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
 
     public static T Load<T>(string _Path) where T : Object
     {

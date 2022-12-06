@@ -4,15 +4,37 @@ using VN;
 
 class Bee : Controllable
 {
-    [SerializeField] Image m_Stroke;
+    #region attributes
 
-    HoneyPot m_Pot;
+    [SerializeField] Image    m_Stroke;
+    [SerializeField] Node     m_Pot;
 
-    public bool            GotAPot    => m_Pot != null && !m_Pot.Dropped;
+    Animator m_Animator;
+    bool     m_IsFlowering;
+
+    #endregion
+
+    #region properties
+
+    public bool            IsFlowering
+    {
+        get => m_IsFlowering;
+        set
+        {
+            m_IsFlowering = value;
+            m_Animator.SetBool("IsFlowering", m_IsFlowering);
+        }
+    }
+
+    public bool            GotHoney   { get; set; }
     public Image           Stroke     => m_Stroke;
 
     Image[] Parts => GetComponentsInChildren<Image>(); 
 
+    #endregion
+
+    #region creation
+    
     public static Bee Create(Node _Parent, Vector2 _Offset, string _ID, Vector2 _FlyTo)
     {
         Bee bee = Utility.LoadObject<Bee>("Prefabs/Bee", _ID, _Parent);
@@ -21,40 +43,33 @@ class Bee : Controllable
         return bee;
     }
 
-    protected override void OnUpdate()
-    {
-        base.OnUpdate();
-
-        HoneyPot[] pots = FindObjectsOfType<HoneyPot>();
-        foreach (HoneyPot pot in pots)
-        {
-            if (pot.CanBePickedUp && Vector2.Distance(Offset, pot.Offset) < 0.5f)
-                PickUpPot(pot);
-        }
-    }
-
+    #endregion
+    
+    #region service methods
     void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo)
     {
         base.Create(_HiveOffset);
         StartCoroutine(FlyToPoint(_FlyTo));
     }
-
-    void PickUpPot(HoneyPot _Pot)
+    
+    void Start()
     {
-        m_Pot = _Pot;
-        
-        m_Pot.PickedUp = true;
-        StartCoroutine(PickUpPotCoroutine(_Pot));
+        m_Animator = GetComponent<Animator>();
+        m_Controller = GetComponent<Controller2D>();
     }
 
-    public void DropPot(Vector2 _Dest)
+    protected override void OnUpdate()
     {
-        if (!GotAPot)
-            return;
-        m_Pot.Dropped = true;
-        m_Pot.PickedUp = false;
-        m_Pot.SetParent(null);
-        StartCoroutine(DropPotCoroutine(_Dest));
+        base.OnUpdate();
+
+        Flower[] flowers = FindObjectsOfType<Flower>();
+        foreach (Flower flower in flowers)
+        {
+            if (flower.CanBeUsed && !IsFlowering && !GotHoney && Vector2.Distance(Offset, flower.Offset) < 0.5f)
+            {
+                DoFlowering(flower);
+            }
+        }
     }
 
     protected override void OnPositionUpdate(Vector2 _Direction)
@@ -69,7 +84,40 @@ class Bee : Controllable
     {
         Stroke.gameObject.SetActive(_Chosen);
     }
+    
+    void DoFlowering(Flower _Flower)
+    {
+        IsFlowering = true;
+        m_Controller.Pause(0.5f, () => 
+                {
+                    _Flower.Used = true;
 
+                    IsFlowering = false;
+                    SetHoneyPot();
+                }
+            );
+    }
+
+    void SetHoneyPot()
+    {
+        GotHoney = true;
+        StartCoroutine(SetHoneyPotCoroutine());
+    }
+
+    #endregion
+
+    #region public methods
+    
+    public void DropHoneyPot(Vector2 _Dest)
+    {
+        GotHoney = false;
+        StartCoroutine(DropHoneyPotCoroutine(_Dest));
+    }
+
+    #endregion
+
+    #region coroutines
+    
     IEnumerator FlyToPoint(Vector2 _Dest)
     {
         Vector2 start = Offset;
@@ -77,41 +125,47 @@ class Bee : Controllable
             null,
             _Phase => Offset = Vector2.Lerp(start, _Dest, _Phase),
             null,
-            1.2f
+            Vector2.Distance(start, _Dest) / Speed
         );
     }
 
-    IEnumerator PickUpPotCoroutine(HoneyPot _Pot)
+    IEnumerator SetHoneyPotCoroutine()
     {
-        Vector2 start = _Pot.Offset;
-        yield return Coroutines.Update(
-            () => _Pot.SetParent(this, true),
-            _Phase => { _Pot.Offset = Vector2.Lerp(start, Offset, _Phase); },
-            null,
-            0.2f
+        yield return StartCoroutine(Coroutines.Update(
+                () =>
+                {
+                    m_Pot.LocalScale = Vector2.zero;
+                    m_Pot.gameObject.SetActive(true);
+                },
+                _Phase => m_Pot.LocalScale = _Phase * Vector2.one,
+                null,
+                0.6f
+            )
         );
     }
 
-    IEnumerator DropPotCoroutine(Vector2 _Dest)
+    IEnumerator DropHoneyPotCoroutine(Vector2 _Dest)
     {
-        Vector2 start = m_Pot.Offset;
-        yield return Coroutines.Update(
-            null,
-            _Phase => m_Pot.Offset = Vector2.Lerp(start, _Dest, _Phase),
-            null,
-            0.2f
+        m_Pot.gameObject.SetActive(false);
+        HoneyPot tmpPot = HoneyPot.Create(null, m_Pot.Offset, "tmpPot", true);
+        Vector2  start  = tmpPot.Offset;
+
+        yield return StartCoroutine(Coroutines.Update(
+                null,
+                _Phase => tmpPot.Offset = Vector2.Lerp(start, _Dest, _Phase),
+                null,
+                0.5f
+            )
         );
 
-        yield return new WaitForSeconds(0.1f);
-
-        yield return Coroutines.Update(
-            null,
-            _Phase => m_Pot.LocalScale = Vector2.Lerp(Vector2.one, Vector2.zero, _Phase),
-            () => {
-                Destroy(m_Pot.gameObject);
-                m_Pot = null;
-            },
-            0.2f
+        yield return StartCoroutine(Coroutines.Update(
+                null,
+                _Phase => tmpPot.LocalScale = Vector2.one * (1 - _Phase),
+                () => Destroy(tmpPot.gameObject),
+                0.4f
+            )
         );
     }
+
+    #endregion
 }

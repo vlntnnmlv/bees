@@ -8,8 +8,8 @@ public class Controllable : Node
 {
 
     Vector2 Direction => m_Controller.DefaultDirectionVector;
-
-    Controller2D           m_Controller;
+    protected float Speed => m_Speed;
+    protected Controller2D           m_Controller;
     [SerializeField] float m_Speed;
 
     void Awake()

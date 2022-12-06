@@ -2,6 +2,8 @@ using UnityEngine;
 using System;
 using System.Collections;
 
+namespace VN
+{
 
 public static class Coroutines
 {
@@ -30,4 +32,6 @@ public static class Coroutines
         _OnFinish?.Invoke();
         yield break;
     }
+}
+
 }

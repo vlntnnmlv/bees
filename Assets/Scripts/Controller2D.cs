@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
 using System;
 
 namespace VN
@@ -58,6 +59,21 @@ public class Controller2D : MonoBehaviour
 
             return vector.normalized;
         }
+    }
+
+    public void Pause(float _Pause, Action _OnFinish = null)
+    {
+        StartCoroutine(PauseCoroutine(_Pause, _OnFinish));
+    }
+
+    IEnumerator PauseCoroutine(float _Pause, Action _OnFinish)
+    {
+        bool chosen = m_Chosen;
+
+        m_Chosen = false;
+        yield return new WaitForSeconds(_Pause);
+        m_Chosen = chosen;
+        _OnFinish?.Invoke();
     }
 }
 

@@ -1,6 +1,5 @@
 using UnityEngine;
-using UnityEditor;
-
+using System.Linq;
 namespace VN
 {
     public partial class Node : MonoBehaviour
@@ -67,11 +66,34 @@ namespace VN
                 transform.parent = null;
             else
                 transform.SetParent(_Parent.transform, _WorldPositionStays);
+
+            SetLayers();
         }
 
         protected void Create(Vector2 _Offset)
         {
             Offset = _Offset;
+            SetLayers();
+        }
+
+        void SetLayers()
+        {
+            if (Parent != null && Parent.gameObject != null)
+            {
+                Node[] children = Parent.GetComponentsInChildren<Node>();
+                float maxLayer = children.Select(_C => _C.Layer).Max();
+                Layer = maxLayer + LAYER_OFFSET;
+            }
+            else
+            {
+                float maxLayer = UnityEngine.SceneManagement.SceneManager
+                    .GetActiveScene()
+                    .GetRootGameObjects()
+                    .Where(_G => _G.GetComponent<Node>() != null)
+                    .Select(_N => _N.layer)
+                    .Max();
+                Layer = maxLayer + LAYER_OFFSET;
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ public class CreateNodeMenu
     {
         Node parent = Selection.activeGameObject?.GetComponent<Node>();
 
-        Image node = Image.Create(parent, Vector2.zero, "Imahe", "");       
+        Image node = Image.Create(parent, Vector2.zero, "Image", "");       
     }
 }
 #endif
