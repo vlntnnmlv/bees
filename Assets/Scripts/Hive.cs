@@ -52,7 +52,6 @@ public class Hive : Image
     void ClearHoneyPotIcons()
     {
         m_HoneyPotsCount = 0;
-        m_HoneyPotIcons.Clear();
         StartCoroutine(ClearHoneyPotIconsCoroutine());
     }
 
@@ -63,5 +62,6 @@ public class Hive : Image
             StartCoroutine(icon.Disappear());
             yield return new WaitForSeconds(0.15f);
         }
+        m_HoneyPotIcons.Clear();
     }
 }
