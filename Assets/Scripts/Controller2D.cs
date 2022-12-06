@@ -20,7 +20,7 @@ public class Controller2D : MonoBehaviour
     public bool A    => m_Map["a"];
     public bool S    => m_Map["s"];
     public bool D    => m_Map["d"];
-    public Action<bool>          OnChosen { get; set; }
+    public Action<bool> OnChosen { get; set; }
 
     [SerializeField] bool m_Chosen;
 
@@ -46,6 +46,7 @@ public class Controller2D : MonoBehaviour
     {
         get
         {
+
             Vector2 vector = Vector2.zero;
 
             if (W)

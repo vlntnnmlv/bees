@@ -9,7 +9,7 @@ public class Flower : Image
         set
         {
             m_Used = value;
-            m_Animator.SetBool("Used", m_Used);
+            m_Animator.SetTrigger("Used");
         }
     }
 
@@ -18,6 +18,8 @@ public class Flower : Image
     [SerializeField] bool m_Appeared = false;
     Animator m_Animator;
     bool     m_Used;
+    float    m_DisappearTime;
+
     public static Flower Create(Node _Parent, Vector2 _Offset, string _ID)
     {
         Flower flower = Utility.LoadObject<Flower>("Prefabs/Flower", _ID, _Parent);
@@ -39,9 +41,21 @@ public class Flower : Image
         GetComponent<SpriteAnimated>().OnAnimationPlayed += () => m_Appeared = true;
     }
 
-    public void SetReady()
+    protected override void OnUpdate()
+    {
+        base.OnUpdate();
+
+        if (Time.time > m_DisappearTime)
+            m_Animator.SetTrigger("Disappear");
+    }
+
+    public void OnAppear()
     {
         m_Appeared = true;
-        Used = false;
+    }
+
+    public void OnDisappear()
+    {
+        Destroy(gameObject, 0.0f);
     }
 }

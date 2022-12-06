@@ -7,10 +7,11 @@ namespace VN
 public class Controllable : Node
 {
 
-    Vector2 Direction => m_Controller.DefaultDirectionVector;
+    protected Vector2 Direction     => m_Controller.DefaultDirectionVector;
     protected float Speed => m_Speed;
-    protected Controller2D           m_Controller;
+    protected Controller2D m_Controller;
     [SerializeField] float m_Speed;
+    Vector2? m_Clicked = null;
 
     void Awake()
     {
@@ -22,11 +23,30 @@ public class Controllable : Node
     {
         base.OnUpdate();
 
+        if (Input.GetMouseButtonDown(0))
+            m_Clicked = Utility.MousePositionWorld;
+
         if (m_Controller.Chosen)
         {
-            Offset += Direction * Time.deltaTime * m_Speed;
-            OnPositionUpdate(Direction);
+            if (m_Clicked.HasValue)
+            {
+                if ((m_Clicked.Value - Offset).sqrMagnitude > 0.01f)
+                    UpdatePosition((m_Clicked.Value - Offset).normalized * Time.deltaTime * m_Speed);
+                else
+                    m_Clicked = null;
+                return;
+            }
+
+            UpdatePosition(Direction * Time.deltaTime * m_Speed);
         }
+        else
+            m_Clicked = null;
+    }
+
+    void UpdatePosition(Vector2 _OffsetDiff)
+    {
+        Offset += _OffsetDiff;
+        OnPositionUpdate(Direction);
     }
 
     void OnMouseDown() 
