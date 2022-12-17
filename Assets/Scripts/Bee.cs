@@ -2,21 +2,24 @@ using UnityEngine;
 using System.Collections;
 using VN;
 
-class Bee : Controllable
+public abstract class Bee : Node, IMovable
 {
     #region attributes
 
-    [SerializeField] Image    m_Stroke;
-    [SerializeField] Node     m_Pot;
+    [SerializeField] protected Node m_Pot;
 
-    Animator m_Animator;
-    bool     m_IsFlowering;
+    Animator     m_Animator;
+    bool         m_IsFlowering;
 
     #endregion
 
     #region properties
 
-    public bool            IsFlowering
+    protected virtual  float   FlyOffSpeed => 5f; 
+    protected abstract float   Speed        { get; }
+    public    abstract Vector2 FlyDirection { get; }
+
+    public bool IsFlowering
     {
         get => m_IsFlowering;
         set
@@ -26,82 +29,73 @@ class Bee : Controllable
         }
     }
 
-    public bool            GotHoney   { get; set; }
-    public Image           Stroke     => m_Stroke;
-
-    Image[] Parts => GetComponentsInChildren<Image>(); 
-
-    #endregion
-
-    #region creation
-    
-    public static Bee Create(Node _Parent, Vector2 _Offset, string _ID, Vector2 _FlyTo)
-    {
-        Bee bee = Utility.LoadObject<Bee>("Prefabs/Bee", _ID, _Parent);
-
-        bee.Create(_Parent, _Offset, _FlyTo);
-        return bee;
-    }
+    public bool GotHoney { get; set; }
 
     #endregion
     
-    #region service methods
-    void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo)
-    {
-        base.Create(_HiveOffset);
-        StartCoroutine(FlyToPoint(_FlyTo));
-    }
-    
+    #region engine methods
+
     void Start()
     {
         m_Animator = GetComponent<Animator>();
-        m_Controller = GetComponent<Controller2D>();
+        TurnAnimator turnAnimator = GetComponent<TurnAnimator>();
+        turnAnimator.OnTurnLeft  = () => OnTurn(true);
+        turnAnimator.OnTurnRight = () => OnTurn(false);
+    }
+
+    #endregion
+
+    #region service methods
+
+    protected void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo)
+    {
+        base.Create(_HiveOffset);
+        StartCoroutine(FlyToPoint(_FlyTo));
     }
 
     protected override void OnUpdate()
     {
         base.OnUpdate();
 
+        if (!IsFlowering)
+        {
+            Vector2 newOffset = Offset + FlyDirection * Speed * Time.deltaTime;
+            if (newOffset.x > Utility.Width/2)
+                newOffset.x = -Utility.Width/2;
+            if (newOffset.x < -Utility.Width/2)
+                newOffset.x = Utility.Width/2;
+
+            if (newOffset.y > Utility.Height/2)
+                newOffset.y = -Utility.Height/2;
+            if (newOffset.y < -Utility.Height/2)
+                newOffset.y = Utility.Height/2;
+
+            Offset = newOffset;
+        }
+
         Flower[] flowers = FindObjectsOfType<Flower>();
         foreach (Flower flower in flowers)
         {
             if (flower.CanBeUsed && !IsFlowering && !GotHoney && Vector2.Distance(Offset, flower.Offset) < 0.5f)
-            {
                 DoFlowering(flower);
-            }
         }
     }
 
-    protected override void OnPositionUpdate(Vector2 _Direction)
-    {
-        foreach (Image part in Parts)
-            part.FlipType = _Direction.x < 0 
-                ? ImageFlipType.VERTICAL
-                : ImageFlipType.NONE;
-    }
-
-    protected override void OnChosen(bool _Chosen)
-    {
-        Stroke.gameObject.SetActive(_Chosen);
-    }
-    
     void DoFlowering(Flower _Flower)
     {
-        IsFlowering = true;
-        m_Controller.Pause(0.5f, () => 
-                {
-                    _Flower.Used = true;
-
-                    IsFlowering = false;
-                    SetHoneyPot();
-                }
-            );
+        _Flower.Used = true;
+        StartCoroutine(FloweringCoroutine());
     }
 
     void SetHoneyPot()
     {
-        GotHoney = true;
         StartCoroutine(SetHoneyPotCoroutine());
+    }
+
+    void OnTurn(bool _Left)
+    {
+        foreach (Image part in GetComponentsInChildren<Image>())
+            part.FlipType = _Left ? ImageFlipType.VERTICAL : ImageFlipType.NONE;
     }
 
     #endregion
@@ -110,7 +104,6 @@ class Bee : Controllable
     
     public void DropHoneyPot(Vector2 _Dest)
     {
-        GotHoney = false;
         StartCoroutine(DropHoneyPotCoroutine(_Dest));
     }
 
@@ -125,8 +118,16 @@ class Bee : Controllable
             null,
             _Phase => Offset = Vector2.Lerp(start, _Dest, _Phase),
             null,
-            Vector2.Distance(start, _Dest) / Speed
+            Vector2.Distance(start, _Dest) / FlyOffSpeed
         );
+    }
+
+    IEnumerator FloweringCoroutine()
+    {
+        IsFlowering = true;
+        yield return new WaitForSeconds(0.5f);
+        IsFlowering = false;
+        SetHoneyPot();
     }
 
     IEnumerator SetHoneyPotCoroutine()
@@ -134,6 +135,7 @@ class Bee : Controllable
         yield return StartCoroutine(Coroutines.Update(
                 () =>
                 {
+                    GotHoney = true;
                     m_Pot.LocalScale = Vector2.zero;
                     m_Pot.gameObject.SetActive(true);
                 },
@@ -151,7 +153,7 @@ class Bee : Controllable
         Vector2  start  = tmpPot.Offset;
 
         yield return StartCoroutine(Coroutines.Update(
-                null,
+                () => GotHoney = false,
                 _Phase => tmpPot.Offset = Vector2.Lerp(start, _Dest, _Phase),
                 null,
                 0.5f

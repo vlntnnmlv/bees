@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
 using System;
 
 namespace VN
@@ -8,74 +6,70 @@ namespace VN
 
 public class Controller2D : MonoBehaviour
 {
-    static Dictionary<string, bool> m_Map = new Dictionary<string, bool>()
+    #region properties
+
+    public Vector2      Direction   { get; set; } = Vector2.zero;
+
+    #endregion
+
+    #region attributes
+
+    IMovable m_Movable;
+
+    #endregion
+
+    #region public methods
+
+    public void Init(IMovable _Movable)
     {
-        {"w",     false },
-        {"a",     false },
-        {"s",     false },
-        {"d",     false },
-    };
+        m_Movable = _Movable;
+    }
 
-    public bool W    => m_Map["w"];
-    public bool A    => m_Map["a"];
-    public bool S    => m_Map["s"];
-    public bool D    => m_Map["d"];
-    public Action<bool> OnChosen { get; set; }
+    #endregion
 
-    [SerializeField] bool m_Chosen;
+    #region engine methods
 
-    public bool Chosen
+    void Update()
     {
-        get => m_Chosen;
-        set
+        CalculateDirection();
+    }
+
+    #endregion
+
+    #region service methods
+
+    void CalculateDirection()
+    {
+        if (m_Movable == null)
+            return;
+
+        Vector2 oldDirection = Direction;
+        Vector2 newDirection = Vector2.zero;
+
+        Vector2 pointMouseClicked;
+
+        // click controls and keyboard controls
+        if (Input.GetMouseButtonDown(0))
         {
-            m_Chosen = value;
-            OnChosen?.Invoke(m_Chosen);
+            pointMouseClicked = Utility.MousePositionWorld;
+            newDirection = (pointMouseClicked - m_Movable.Offset);
         }
-    }
-
-    public void Update()
-    {
-        m_Map["w"]     = Input.GetKey("w");
-        m_Map["a"]     = Input.GetKey("a");
-        m_Map["s"]     = Input.GetKey("s");
-        m_Map["d"]     = Input.GetKey("d");
-    }
-
-    public Vector2 DefaultDirectionVector
-    {
-        get
+        else
         {
-
-            Vector2 vector = Vector2.zero;
-
-            if (W)
-                vector += Vector2.up;
-            if (A)
-                vector += Vector2.left;
-            if (S)
-                vector += Vector2.down;
-            if (D)
-                vector += Vector2.right;
-
-            return vector.normalized;
+            if (Input.GetKey("w"))
+                newDirection += Vector2.up;
+            if (Input.GetKey("a"))
+                newDirection += Vector2.left;
+            if (Input.GetKey("s"))
+                newDirection += Vector2.down;
+            if (Input.GetKey("d"))
+                newDirection += Vector2.right;
         }
+
+        Direction = newDirection.normalized;
     }
 
-    public void Pause(float _Pause, Action _OnFinish = null)
-    {
-        StartCoroutine(PauseCoroutine(_Pause, _OnFinish));
-    }
-
-    IEnumerator PauseCoroutine(float _Pause, Action _OnFinish)
-    {
-        bool chosen = m_Chosen;
-
-        m_Chosen = false;
-        yield return new WaitForSeconds(_Pause);
-        m_Chosen = chosen;
-        _OnFinish?.Invoke();
-    }
+    #endregion
 }
 
 }

@@ -24,6 +24,10 @@ public class Image : Node
                     m_SpriteRenderer.flipX = true;
                     m_SpriteRenderer.flipY = false;
                     break;
+                case ImageFlipType.BOTH:
+                    m_SpriteRenderer.flipX = true;
+                    m_SpriteRenderer.flipY = true;
+                    break;
             }
         }
     }

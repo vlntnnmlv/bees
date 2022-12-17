@@ -33,7 +33,7 @@ public class Hive : Image
                 AddHoneyPotsIcon();
                 if (m_HoneyPotsCount == 5)
                 {
-                    Bee.Create(this, Offset, $"bee_{m_BeesCount}", VN.Utility.RandomOffset);
+                    BeeWorker.Create(this, Offset, $"bee_worker_{m_BeesCount}", VN.Utility.RandomOffset);
                     m_BeesCount += 1;
                     ClearHoneyPotIcons();
                 }
