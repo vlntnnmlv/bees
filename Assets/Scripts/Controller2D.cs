@@ -6,12 +6,6 @@ namespace VN
 
 public class Controller2D : MonoBehaviour
 {
-    #region properties
-
-    public Vector2      Direction   { get; set; } = Vector2.zero;
-
-    #endregion
-
     #region attributes
 
     IMovable m_Movable;
@@ -43,30 +37,28 @@ public class Controller2D : MonoBehaviour
         if (m_Movable == null)
             return;
 
-        Vector2 oldDirection = Direction;
         Vector2 newDirection = Vector2.zero;
 
-        Vector2 pointMouseClicked;
-
-        // click controls and keyboard controls
-        if (Input.GetMouseButtonDown(0))
         {
-            pointMouseClicked = Utility.MousePositionWorld;
-            newDirection = (pointMouseClicked - m_Movable.Offset);
-        }
-        else
-        {
-            if (Input.GetKey("w"))
-                newDirection += Vector2.up;
-            if (Input.GetKey("a"))
-                newDirection += Vector2.left;
-            if (Input.GetKey("s"))
-                newDirection += Vector2.down;
-            if (Input.GetKey("d"))
-                newDirection += Vector2.right;
+            // click controls and keyboard controls
+            if (Input.GetMouseButton(0))
+            {
+                newDirection = (Utility.MousePositionWorld - m_Movable.Offset);
+            }
+            else
+            {
+                if (Input.GetKey("w"))
+                    newDirection += Vector2.up;
+                if (Input.GetKey("a"))
+                    newDirection += Vector2.left;
+                if (Input.GetKey("s"))
+                    newDirection += Vector2.down;
+                if (Input.GetKey("d"))
+                    newDirection += Vector2.right;
+            }
         }
 
-        Direction = newDirection.normalized;
+        m_Movable.Direction = newDirection.normalized;
     }
 
     #endregion

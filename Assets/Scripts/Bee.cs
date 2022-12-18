@@ -2,8 +2,14 @@ using UnityEngine;
 using System.Collections;
 using VN;
 
-public abstract class Bee : Node, IMovable
+public abstract class Bee : Character
 {
+    #region constants
+
+    const float FLY_OFF_SPEED = 5;
+
+    #endregion
+
     #region attributes
 
     [SerializeField] protected Node m_Pot;
@@ -15,15 +21,12 @@ public abstract class Bee : Node, IMovable
 
     #region properties
 
-    protected virtual  float   FlyOffSpeed => 5f; 
-    protected abstract float   Speed        { get; }
-    public    abstract Vector2 FlyDirection { get; }
-
     public bool IsFlowering
     {
         get => m_IsFlowering;
         set
         {
+            Paused = value;
             m_IsFlowering = value;
             m_Animator.SetBool("IsFlowering", m_IsFlowering);
         }
@@ -38,40 +41,31 @@ public abstract class Bee : Node, IMovable
     void Start()
     {
         m_Animator = GetComponent<Animator>();
-        TurnAnimator turnAnimator = GetComponent<TurnAnimator>();
-        turnAnimator.OnTurnLeft  = () => OnTurn(true);
-        turnAnimator.OnTurnRight = () => OnTurn(false);
+    }
+
+    #endregion
+
+    #region public methods
+    
+    public void DropHoneyPot(Vector2 _Dest)
+    {
+        StartCoroutine(DropHoneyPotCoroutine(_Dest));
     }
 
     #endregion
 
     #region service methods
 
-    protected void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo)
+    protected void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo, float _Speed)
     {
         base.Create(_HiveOffset);
+        Speed = _Speed;
         StartCoroutine(FlyToPoint(_FlyTo));
     }
 
     protected override void OnUpdate()
     {
         base.OnUpdate();
-
-        if (!IsFlowering)
-        {
-            Vector2 newOffset = Offset + FlyDirection * Speed * Time.deltaTime;
-            if (newOffset.x > Utility.Width/2)
-                newOffset.x = -Utility.Width/2;
-            if (newOffset.x < -Utility.Width/2)
-                newOffset.x = Utility.Width/2;
-
-            if (newOffset.y > Utility.Height/2)
-                newOffset.y = -Utility.Height/2;
-            if (newOffset.y < -Utility.Height/2)
-                newOffset.y = Utility.Height/2;
-
-            Offset = newOffset;
-        }
 
         Flower[] flowers = FindObjectsOfType<Flower>();
         foreach (Flower flower in flowers)
@@ -92,25 +86,10 @@ public abstract class Bee : Node, IMovable
         StartCoroutine(SetHoneyPotCoroutine());
     }
 
-    void OnTurn(bool _Left)
-    {
-        foreach (Image part in GetComponentsInChildren<Image>())
-            part.FlipType = _Left ? ImageFlipType.VERTICAL : ImageFlipType.NONE;
-    }
-
-    #endregion
-
-    #region public methods
-    
-    public void DropHoneyPot(Vector2 _Dest)
-    {
-        StartCoroutine(DropHoneyPotCoroutine(_Dest));
-    }
-
     #endregion
 
     #region coroutines
-    
+
     IEnumerator FlyToPoint(Vector2 _Dest)
     {
         Vector2 start = Offset;
@@ -118,7 +97,7 @@ public abstract class Bee : Node, IMovable
             null,
             _Phase => Offset = Vector2.Lerp(start, _Dest, _Phase),
             null,
-            Vector2.Distance(start, _Dest) / FlyOffSpeed
+            Vector2.Distance(start, _Dest) / FLY_OFF_SPEED
         );
     }
 
@@ -141,7 +120,7 @@ public abstract class Bee : Node, IMovable
                 },
                 _Phase => m_Pot.LocalScale = _Phase * Vector2.one,
                 null,
-                0.6f
+                0.35f
             )
         );
     }

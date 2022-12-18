@@ -110,7 +110,6 @@ GameObject:
   - component: {fileID: -138380365928289737}
   - component: {fileID: -8333304913690613931}
   - component: {fileID: -6850571663886007341}
-  - component: {fileID: 7282526413288280108}
   m_Layer: 0
   m_Name: BeeWorker
   m_TagString: Untagged
@@ -179,18 +178,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &7282526413288280108
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 306948030092844363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63e1fda48079d4dc6a357169707fabb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &306948030162439765
 GameObject:
   m_ObjectHideFlags: 0

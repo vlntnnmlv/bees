@@ -10,16 +10,15 @@ class BeeWorker : Bee
     {
         BeeWorker bee = Utility.LoadObject<BeeWorker>("Prefabs/BeeWorker", _ID, _Parent);
 
-        bee.Create(_Parent, _Offset, _FlyTo);
+        bee.Create(_Parent, _Offset, _FlyTo, 3.7f);
         return bee;
     }
 
     #endregion
 
-    #region properties
+    #region constants
 
-    protected override float   Speed        => 3.5f;
-    public    override Vector2 FlyDirection => GetSmoothDirection();
+    const float DIRECTION_LERP_TIME = 0.3f;
 
     #endregion
 
@@ -27,40 +26,43 @@ class BeeWorker : Bee
 
     Vector2 m_PrevDirection = Vector2.zero;
     Vector2 m_NextDirection = Vector2.zero;
-    Vector2 m_Direction     = Vector2.zero;
 
     float   m_DirectionChangedTime = 0;
-    float   m_DirectionLerpTime = 0.3f;
 
     #endregion
 
     #region service methods
 
-    Vector2 GetSmoothDirection()
+    protected override void OnUpdate()
+    {
+        UpdateDirectionSmooth();
+
+        base.OnUpdate();
+    }
+
+    void UpdateDirectionSmooth()
     {
         if (GotHoney)
         {
-            m_Direction = -Offset.normalized;
-            return m_Direction;
+            Direction = -Offset.normalized;
+            return;
         }
 
         if (Time.time - m_DirectionChangedTime >= 1)
         {
-            m_PrevDirection = m_Direction;
+            m_PrevDirection = Direction;
             m_NextDirection = Utility.RandomOffset.normalized;
             m_DirectionChangedTime = Time.time;
         }
 
-        if (Time.time - m_DirectionChangedTime < m_DirectionLerpTime)
-            m_Direction = Vector2.Lerp(m_PrevDirection, m_NextDirection, (Time.time - m_DirectionChangedTime) / m_DirectionLerpTime);
-
-        return m_Direction;
+        if (Time.time - m_DirectionChangedTime < DIRECTION_LERP_TIME)
+            Direction = Vector2.Lerp(m_PrevDirection, m_NextDirection, (Time.time - m_DirectionChangedTime) / DIRECTION_LERP_TIME);
     }
 
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(Offset, Offset + m_Direction);
+        Gizmos.DrawLine(Offset, Offset + Direction);
     }
 
     #endregion

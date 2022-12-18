@@ -10,7 +10,7 @@ public class BeePlayer : Bee
     {
         BeePlayer beePlayer = Utility.LoadObject<BeePlayer>("Prefabs/BeePlayer", _ID, _Parent);
 
-        beePlayer.Create(_Parent, _Offset, _FlyTo);
+        beePlayer.Create(_Parent, _Offset, _FlyTo, 5);
         return beePlayer;
     }
 
@@ -23,23 +23,27 @@ public class BeePlayer : Bee
         get
         {
             if (m_Controller == null)
-            {
                 m_Controller = GetComponent<Controller2D>() ?? gameObject.AddComponent<Controller2D>();
-                m_Controller.Init(this);
-            }
 
             return m_Controller;
         }
     }
-
-    protected override float   Speed        => 5;
-    public    override Vector2 FlyDirection => Controller.Direction;
 
     #endregion
 
     #region attributes
 
     Controller2D m_Controller;
+
+    #endregion
+
+    #region service methods
+
+    new void Create(Node _Parent, Vector2 _Offset, Vector2 _FlyTo, float _Speed)
+    {
+        Controller.Init(this);
+        base.Create(_Parent, _Offset, _FlyTo, _Speed);
+    }
 
     #endregion
 }

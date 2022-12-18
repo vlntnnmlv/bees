@@ -18,7 +18,10 @@ public class Hive : Image
 
         return hive;
     }
-
+    void Start()
+    {
+        BeePlayer.Create(null, Vector2.zero, "BeePLayer", Vector2.zero);
+    }
     protected override void OnUpdate()
     {
         base.OnUpdate();
