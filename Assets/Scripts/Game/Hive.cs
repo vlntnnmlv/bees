@@ -5,9 +5,16 @@ using VN;
 
 public class Hive : Image
 {
+    #region constants
     const float POT_ICON_MARGIN = 0.1f;
-    int m_BeesCount = 0;
+
+    #endregion
+
+    int m_BeesCount = 1;
     int m_HoneyPotsCount = 0;
+
+    float m_TimeFlowerSpawned = 0;
+    float m_PeriodFlowerSpawned = 5;
 
     List<HoneyPot> m_HoneyPotIcons = new List<HoneyPot>();
 
@@ -25,6 +32,12 @@ public class Hive : Image
     protected override void OnUpdate()
     {
         base.OnUpdate();
+
+        if (Time.time - m_TimeFlowerSpawned > m_PeriodFlowerSpawned / m_BeesCount / 1.2f)
+        {
+            Flower.Create(null, VN.Utility.RandomOffset, "flower");
+            m_TimeFlowerSpawned = Time.time;
+        }
 
         Bee[] bees = FindObjectsOfType<Bee>();
         foreach (Bee bee in bees)
@@ -55,16 +68,8 @@ public class Hive : Image
     void ClearHoneyPotIcons()
     {
         m_HoneyPotsCount = 0;
-        StartCoroutine(ClearHoneyPotIconsCoroutine());
-    }
-
-    IEnumerator ClearHoneyPotIconsCoroutine()
-    {
         foreach (HoneyPot icon in m_HoneyPotIcons)
-        {
             StartCoroutine(icon.Disappear());
-            yield return new WaitForSeconds(0.15f);
-        }
         m_HoneyPotIcons.Clear();
     }
 }

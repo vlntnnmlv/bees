@@ -1,12 +1,10 @@
 using UnityEngine;
 using VN;
-using UnityEngine.SceneManagement;
-using System;
 
 namespace VN
 {
 
-public class Button : Node
+public abstract class Button : Node
 {
     new public static Button Create(Node _Parent, Vector2 _Offset, string _ID)
     {
@@ -16,17 +14,11 @@ public class Button : Node
         return button;
     }
 
-    public Action OnClicked { get; set; }
+    protected abstract void OnClicked();
 
     void OnMouseDown()
     {
-        StartCoroutine(Coroutines.Update(
-                null,
-                _Phase => LocalScale = Vector2.one * (1 - _Phase),
-                () => SceneManager.LoadScene("MainScene"),
-                0.3f
-            )
-        );
+        OnClicked();
     }
 }
 

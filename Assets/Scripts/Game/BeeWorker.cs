@@ -18,7 +18,7 @@ class BeeWorker : Bee
     #region constants
 
     const float DIRECTION_LERP_TIME = 0.3f;
-    const float LIFE_TIME           = 10;
+    const float LIFE_TIME           = 20;
 
     #endregion
 
@@ -43,7 +43,7 @@ class BeeWorker : Bee
 
     protected override void OnUpdate()
     {
-        if (Time.time - m_CreationTime > LIFE_TIME)
+        if (!GotHoney && !IsFlowering && Time.time - m_CreationTime > LIFE_TIME)
         {
             GetComponentInChildren<SpriteAnimated>().Playing = false;
             Paused = true;
