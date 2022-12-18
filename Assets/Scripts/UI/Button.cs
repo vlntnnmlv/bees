@@ -1,6 +1,7 @@
 using UnityEngine;
 using VN;
 using UnityEngine.SceneManagement;
+using System;
 
 namespace VN
 {
@@ -15,9 +16,17 @@ public class Button : Node
         return button;
     }
 
+    public Action OnClicked { get; set; }
+
     void OnMouseDown()
     {
-        SceneManager.LoadScene("MainScene");
+        StartCoroutine(Coroutines.Update(
+                null,
+                _Phase => LocalScale = Vector2.one * (1 - _Phase),
+                () => SceneManager.LoadScene("MainScene"),
+                0.3f
+            )
+        );
     }
 }
 

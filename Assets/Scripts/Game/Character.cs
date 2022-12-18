@@ -3,9 +3,10 @@ using VN;
 
 public abstract class Character : Node, IMovable
 {
-    public Vector2 Direction { get; set; } = Vector2.zero;
-    public float   Speed     { get; set; }
-    public bool    Paused    { get; set; }
+    public Vector2 Direction    { get; set; } = Vector2.zero;
+    public float   Speed        { get; set; }
+    public bool    Paused       { get; set; }
+    public bool    Constrainted { get; set; } = true;
 
     protected override void OnUpdate()
     {
@@ -14,15 +15,18 @@ public abstract class Character : Node, IMovable
         if (!Paused)
         {
             Vector2 newOffset = Offset + Direction * Speed * Time.deltaTime;
-            if (newOffset.x > Utility.Width/2)
-                newOffset.x = -Utility.Width/2;
-            if (newOffset.x < -Utility.Width/2)
-                newOffset.x = Utility.Width/2;
+            if (Constrainted)
+            {
+                if (newOffset.x > Utility.Width/2)
+                    newOffset.x = -Utility.Width/2;
+                if (newOffset.x < -Utility.Width/2)
+                    newOffset.x = Utility.Width/2;
 
-            if (newOffset.y > Utility.Height/2)
-                newOffset.y = -Utility.Height/2;
-            if (newOffset.y < -Utility.Height/2)
-                newOffset.y = Utility.Height/2;
+                if (newOffset.y > Utility.Height/2)
+                    newOffset.y = -Utility.Height/2;
+                if (newOffset.y < -Utility.Height/2)
+                    newOffset.y = Utility.Height/2;
+            }
 
             Offset = newOffset;
         }

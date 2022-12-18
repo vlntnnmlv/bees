@@ -4,18 +4,13 @@ using VN;
 
 public abstract class Bee : Character
 {
-    #region constants
-
-    const float FLY_OFF_SPEED = 5;
-
-    #endregion
-
     #region attributes
 
     [SerializeField] protected Node m_Pot;
 
-    Animator     m_Animator;
-    bool         m_IsFlowering;
+    protected Animator m_Animator;
+    bool               m_IsFlowering;
+    bool               m_Dead;
 
     #endregion
 
@@ -29,6 +24,16 @@ public abstract class Bee : Character
             Paused = value;
             m_IsFlowering = value;
             m_Animator.SetBool("IsFlowering", m_IsFlowering);
+        }
+    }
+
+    protected bool Dead
+    {
+        get => m_Dead;
+        set
+        {
+            m_Dead = value;
+            m_Animator.SetBool("Dead", m_Dead);
         }
     }
 
@@ -50,6 +55,11 @@ public abstract class Bee : Character
     public void DropHoneyPot(Vector2 _Dest)
     {
         StartCoroutine(DropHoneyPotCoroutine(_Dest));
+    }
+
+    public void OnDied()
+    {
+        Destroy(gameObject, 0.0f);
     }
 
     #endregion
@@ -95,9 +105,9 @@ public abstract class Bee : Character
         Vector2 start = Offset;
         yield return Coroutines.Update(
             null,
-            _Phase => Offset = Vector2.Lerp(start, _Dest, _Phase),
+            _ => Direction = (_Dest - start).normalized,
             null,
-            Vector2.Distance(start, _Dest) / FLY_OFF_SPEED
+            Vector2.Distance(start, _Dest) / Speed
         );
     }
 

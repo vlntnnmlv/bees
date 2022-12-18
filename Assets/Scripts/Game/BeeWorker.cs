@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using VN;
 
 class BeeWorker : Bee
@@ -19,6 +18,7 @@ class BeeWorker : Bee
     #region constants
 
     const float DIRECTION_LERP_TIME = 0.3f;
+    const float LIFE_TIME           = 10;
 
     #endregion
 
@@ -28,13 +28,28 @@ class BeeWorker : Bee
     Vector2 m_NextDirection = Vector2.zero;
 
     float   m_DirectionChangedTime = 0;
+    float   m_CreationTime = 0;
 
     #endregion
 
     #region service methods
 
+    new void Create(Node _Parent, Vector2 _Offset, Vector2 _FlyTo, float _Speed)
+    {
+        base.Create(_Parent, _Offset, _FlyTo, _Speed);
+
+        m_CreationTime = Time.time;
+    }
+
     protected override void OnUpdate()
     {
+        if (Time.time - m_CreationTime > LIFE_TIME)
+        {
+            GetComponentInChildren<SpriteAnimated>().Playing = false;
+            Paused = true;
+            Dead   = true;
+        }
+
         UpdateDirectionSmooth();
 
         base.OnUpdate();
