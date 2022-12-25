@@ -14,7 +14,7 @@ public class Hive : Image
     int m_HoneyPotsCount = 0;
 
     float m_TimeFlowerSpawned = 0;
-    float m_PeriodFlowerSpawned = 5;
+    float PeriodFlowerSpawn => 8 + Mathf.Sqrt(5 + 1 / m_BeesCount);
 
     List<HoneyPot> m_HoneyPotIcons = new List<HoneyPot>();
 
@@ -25,6 +25,7 @@ public class Hive : Image
 
         return hive;
     }
+
     void Start()
     {
         BeePlayer.Create(null, Vector2.zero, "BeePLayer", Vector2.zero);
@@ -33,7 +34,7 @@ public class Hive : Image
     {
         base.OnUpdate();
 
-        if (Time.time - m_TimeFlowerSpawned > m_PeriodFlowerSpawned / m_BeesCount / 1.2f)
+        if (Time.time - m_TimeFlowerSpawned > PeriodFlowerSpawn)
         {
             Flower.Create(null, VN.Utility.RandomOffset, "flower");
             m_TimeFlowerSpawned = Time.time;

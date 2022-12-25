@@ -3,6 +3,8 @@ using VN;
 
 public class Flower : Image
 {
+    const float LIFE_TIME = 15;
+
     public bool Used
     {
         get => m_Used;
@@ -18,7 +20,7 @@ public class Flower : Image
     [SerializeField] bool m_Appeared = false;
     Animator m_Animator;
     bool     m_Used;
-    float    m_DisappearTime;
+    float    m_CreationTime;
 
     new public static Flower Create(Node _Parent, Vector2 _Offset, string _ID)
     {
@@ -29,7 +31,7 @@ public class Flower : Image
         return flower;
     }
 
-    void Start()
+    void Awake()
     {
         m_Animator = GetComponent<Animator>();
     }
@@ -39,14 +41,17 @@ public class Flower : Image
         base.Create(_Offset);
 
         GetComponent<SpriteAnimated>().OnAnimationPlayed += () => m_Appeared = true;
+        m_Animator.SetTrigger("Disappear");
+        m_CreationTime = Time.time;
     }
 
     protected override void OnUpdate()
     {
         base.OnUpdate();
 
-        if (Time.time > m_DisappearTime)
-            m_Animator.SetTrigger("Disappear");
+        if (Time.time - m_CreationTime > LIFE_TIME)
+            Used = true;
+            
     }
 
     public void OnAppear()
