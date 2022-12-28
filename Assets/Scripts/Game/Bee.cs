@@ -69,6 +69,7 @@ public abstract class Bee : Character
     protected void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo, float _Speed)
     {
         base.Create(_HiveOffset);
+
         Speed = _Speed;
         StartCoroutine(FlyToPoint(_FlyTo));
     }
@@ -139,6 +140,7 @@ public abstract class Bee : Character
     {
         m_Pot.gameObject.SetActive(false);
         HoneyPot tmpPot = HoneyPot.Create(null, m_Pot.Offset, "tmpPot", true);
+        tmpPot.transform.rotation = m_Pot.transform.rotation;
         Vector2  start  = tmpPot.Offset;
 
         yield return StartCoroutine(Coroutines.Update(

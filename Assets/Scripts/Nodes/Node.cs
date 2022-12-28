@@ -70,7 +70,7 @@ namespace VN
             SetLayers();
         }
 
-        protected void Create(Vector2 _Offset)
+        protected virtual void Create(Vector2 _Offset)
         {
             Offset = _Offset;
             SetLayers();

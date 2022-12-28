@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
 using VN;
 
 public class Hive : Image
@@ -14,7 +13,7 @@ public class Hive : Image
     int m_HoneyPotsCount = 0;
 
     float m_TimeFlowerSpawned = 0;
-    float PeriodFlowerSpawn => 8 + Mathf.Sqrt(5 + 1 / m_BeesCount);
+    float PeriodFlowerSpawn => 17 - 0.05f * Mathf.Sqrt(m_BeesCount);
 
     List<HoneyPot> m_HoneyPotIcons = new List<HoneyPot>();
 

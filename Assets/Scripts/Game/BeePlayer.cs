@@ -43,6 +43,7 @@ public class BeePlayer : Bee
     {
         Controller.Init(this);
         base.Create(_Parent, _Offset, _FlyTo, _Speed);
+        Health = 100;
     }
 
     #endregion

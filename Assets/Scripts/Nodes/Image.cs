@@ -20,6 +20,18 @@ public class Image : Node
 
     #region properties
 
+    public Vector2 Size
+    {
+        get => m_SpriteRenderer.sprite.bounds.size;
+        set => m_SpriteRenderer.size = value;
+    }
+
+    public Color Color
+    {
+        get => m_SpriteRenderer.color;
+        set => m_SpriteRenderer.color = value;
+    }
+
     public ImageFlipType FlipType
     {
         set
@@ -55,7 +67,6 @@ public class Image : Node
     void Awake()
     {
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
-        m_SpriteRenderer.hideFlags = HideFlags.HideInInspector;
     }
 
     #endregion

@@ -39,6 +39,7 @@ class BeeWorker : Bee
         base.Create(_Parent, _Offset, _FlyTo, _Speed);
 
         m_CreationTime = Time.time;
+        Health = 20;
     }
 
     protected override void OnUpdate()
