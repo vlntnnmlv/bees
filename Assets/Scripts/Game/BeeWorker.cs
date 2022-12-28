@@ -5,11 +5,11 @@ class BeeWorker : Bee
 {
     #region creation
     
-    public static BeeWorker Create(Node _Parent, Vector2 _Offset, string _ID, Vector2 _FlyTo)
+    public static BeeWorker Create(Node _Parent, Vector2 _Offset, string _ID, Vector2 _FlyTo, float _Health = 20, float _Speed = 3.7f)
     {
         BeeWorker bee = Utility.LoadObject<BeeWorker>("Prefabs/BeeWorker", _ID, _Parent);
 
-        bee.Create(_Parent, _Offset, _FlyTo, 3.7f);
+        bee.Create(_Parent, _Offset, _FlyTo, _Health, _Speed);
         return bee;
     }
 
@@ -34,12 +34,11 @@ class BeeWorker : Bee
 
     #region service methods
 
-    new void Create(Node _Parent, Vector2 _Offset, Vector2 _FlyTo, float _Speed)
+    new void Create(Node _Parent, Vector2 _Offset, Vector2 _FlyTo, float _Health, float _Speed)
     {
-        base.Create(_Parent, _Offset, _FlyTo, _Speed);
+        base.Create(_Parent, _Offset, _FlyTo, _Health, _Speed);
 
         m_CreationTime = Time.time;
-        Health = 20;
     }
 
     protected override void OnUpdate()

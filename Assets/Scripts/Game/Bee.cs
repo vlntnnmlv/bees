@@ -66,11 +66,10 @@ public abstract class Bee : Character
 
     #region service methods
 
-    protected void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo, float _Speed)
+    protected void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo, float _Health, float _Speed)
     {
-        base.Create(_HiveOffset);
+        base.Create(_HiveOffset, _Health, _Speed);
 
-        Speed = _Speed;
         StartCoroutine(FlyToPoint(_FlyTo));
     }
 

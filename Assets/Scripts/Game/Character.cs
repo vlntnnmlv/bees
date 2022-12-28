@@ -6,13 +6,13 @@ public class Character : Node, IMovable
 {
     [SerializeField] bool    m_HealthBarAlwaysActive;
     HealthBar m_HealthBar;
-    int       m_Health;
+    float     m_Health;
 
     public Vector2 Direction    { get; set; } = Vector2.zero;
     public float   Speed        { get; set; }
     public bool    Paused       { get; set; }
     public bool    Constrainted { get; set; } = true;
-    public int     Health
+    public float     Health
     {
         get => m_Health;
         set
@@ -22,7 +22,7 @@ public class Character : Node, IMovable
                 m_Health = 0;
 
             if (m_HealthBar != null)
-                m_HealthBar.UpdateBar((float) m_Health);
+                m_HealthBar.UpdateBar(m_Health);
         }
     }
 
@@ -45,11 +45,14 @@ public class Character : Node, IMovable
         }
     }
 
-    protected override void Create(Vector2 _Offset)
+    protected void Create(Vector2 _Offset, float _Health, float _Speed)
     {
         base.Create(_Offset);
 
         CreateHealthBar();
+
+        Health = _Health;
+        Speed  = _Speed;
     }
 
     void CreateHealthBar()
