@@ -83,6 +83,14 @@ public abstract class Bee : Character
             if (flower.CanBeUsed && !IsFlowering && !GotHoney && Vector2.Distance(Offset, flower.Offset) < 0.5f)
                 DoFlowering(flower);
         }
+
+        Spider[] spiders = FindObjectsOfType<Spider>();
+        foreach (Spider s in spiders)
+        {
+            if (Vector2.Distance(Offset, s.Offset) < 0.5f)
+                s.Health -= 10;
+
+        }
     }
 
     void DoFlowering(Flower _Flower)

@@ -28,7 +28,10 @@ public class Hive : Image
     void Start()
     {
         BeePlayer.Create(null, Vector2.zero, "BeePLayer", Vector2.zero);
+        Flower.Create(null, VN.Utility.RandomOffset, "flower");
+        m_TimeFlowerSpawned = Time.time;
     }
+
     protected override void OnUpdate()
     {
         base.OnUpdate();

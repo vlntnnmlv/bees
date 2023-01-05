@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eabf76cee2ec4438fa7170937a655b62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HealthBarAlwaysActive: 0
+  m_IsHealthBarActive: 1
 --- !u!1 &3511856094902567834
 GameObject:
   m_ObjectHideFlags: 0
@@ -156,6 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88320b614b38c4d1895b48a324538263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_FramePeriod: 0.1
   m_Sprites:
   - {fileID: 343209921, guid: 0bce3f40791c14dcf988d0386a3b56b7, type: 3}
   - {fileID: 771221578, guid: 0bce3f40791c14dcf988d0386a3b56b7, type: 3}

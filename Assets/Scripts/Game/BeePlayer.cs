@@ -29,6 +29,8 @@ public class BeePlayer : Bee
         }
     }
 
+    public override bool IsHealthBarActive => base.IsHealthBarActive && IsDamaged;
+
     #endregion
 
     #region attributes

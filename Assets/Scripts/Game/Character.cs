@@ -4,7 +4,7 @@ using VN;
 
 public class Character : Node, IMovable
 {
-    [SerializeField] bool    m_HealthBarAlwaysActive;
+    [SerializeField] bool    m_IsHealthBarActive;
     HealthBar m_HealthBar;
     float     m_Health;
     bool      m_Paused;
@@ -20,22 +20,27 @@ public class Character : Node, IMovable
         get => m_Health;
         set
         {
+            if (value < m_Health)
+                IsDamaged = true;
+
             m_Health = value;
             if (value <= 0)
+            {
                 m_Health = 0;
+                Destroy(gameObject);
+            }
 
-            if (m_HealthBar != null)
+            if (IsHealthBarActive && m_HealthBar != null)
                 m_HealthBar.UpdateBar(m_Health);
         }
     }
 
+    protected bool IsDamaged { get; set; }
+    public float Damage { get; set; }
+
     protected Image[] Parts => GetComponentsInChildren<Image>();
 
-    public bool    HealthBarAlwaysActive
-    {
-        get => m_HealthBarAlwaysActive;
-        set => m_HealthBarAlwaysActive = value;
-    }
+    public virtual bool IsHealthBarActive => m_IsHealthBarActive;
 
     protected Vector2 Size
     {
@@ -91,6 +96,8 @@ public class Character : Node, IMovable
             OnTurn(false);
         if (Direction.x < 0)
             OnTurn(true);
+
+        m_HealthBar.gameObject.SetActive(IsHealthBarActive);
     }
 
     void OnTurn(bool _Left)

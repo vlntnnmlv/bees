@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5b458d3995fc43159cac1ec06e51796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HealthBarAlwaysActive: 0
+  m_IsHealthBarActive: 1
   m_Pot: {fileID: 6063804270987440242}
 --- !u!95 &-6850571663886007341
 Animator:

@@ -3,7 +3,7 @@ using VN;
 
 public class Spider : Character
 {
-    public static Spider Create(Node _Parent, Vector2 _Offset, string _ID, float _Health = 25, float _Speed = 3)
+    public static Spider Create(Node _Parent, Vector2 _Offset, string _ID, float _Health = 25, float _Speed = 1)
     {
         Spider spider = Utility.LoadObject<Spider>("Prefabs/Spider", _ID, _Parent);
 
