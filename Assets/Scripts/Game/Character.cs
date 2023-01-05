@@ -1,20 +1,45 @@
 using UnityEngine;
 using System.Linq;
+using System.Collections;
 using VN;
 
 public class Character : Node, IMovable
 {
+    #region inner types
+
+    public enum GroupType
+    {
+        FRIENDLY,
+        PEACEFULL,
+        HOSTILE
+    }
+
+    #endregion
+
+    #region attributes
+
     [SerializeField] bool    m_IsHealthBarActive;
     HealthBar m_HealthBar;
     float     m_Health;
     bool      m_Paused;
+    Coroutine m_AttackCoroutine;
 
-    public Vector2 Direction    { get; set; } = Vector2.zero;
-    public float   Speed        { get; set; }
 
-    public bool    Paused       { get; set; }
+    #endregion
 
-    public bool    Constrainted { get; set; } = true;
+    #region properties
+
+    public bool    Paused         { get; set; }
+    public bool    Constrainted   { get; set; } = true;
+    public Vector2 Direction      { get; set; } = Vector2.zero;
+    public float   Speed          { get; set; }
+    public float   Damage         { get; set; }
+    public float   AttackDistance { get; set; } = 0.5f;
+    public float   AttackDelay    { get; set; } = 0.5f;
+
+    public virtual bool      IsHealthBarActive => m_IsHealthBarActive;
+    public virtual GroupType Group             => GroupType.PEACEFULL;
+
     public float   Health
     {
         get => m_Health;
@@ -36,11 +61,8 @@ public class Character : Node, IMovable
     }
 
     protected bool IsDamaged { get; set; }
-    public float Damage { get; set; }
 
     protected Image[] Parts => GetComponentsInChildren<Image>();
-
-    public virtual bool IsHealthBarActive => m_IsHealthBarActive;
 
     protected Vector2 Size
     {
@@ -53,7 +75,11 @@ public class Character : Node, IMovable
         }
     }
 
-    protected void Create(Vector2 _Offset, float _Health, float _Speed)
+    #endregion
+
+    #region service methods
+
+    protected void Create(Vector2 _Offset, float _Health, float _Speed, float _Damage)
     {
         base.Create(_Offset);
 
@@ -61,17 +87,22 @@ public class Character : Node, IMovable
 
         Health = _Health;
         Speed  = _Speed;
-    }
-
-    void CreateHealthBar()
-    {
-        m_HealthBar = HealthBar.Create(this, new Vector2(0, Size.y * 0.55f), "HealthBar");
-        m_HealthBar.Color = Color.red;
+        Damage = _Damage;
     }
 
     protected override void OnUpdate()
     {
         base.OnUpdate();
+
+        Character[] characters = FindObjectsOfType<Character>();
+        foreach (Character character in characters)
+        {
+            if (ShouldAttack(character) && Vector2.Distance(Offset, character.Offset) < AttackDistance && m_AttackCoroutine == null)
+            {
+                Debug.Log($"[Character] {this.name} attacks {character.name} with {Damage} damage.");
+                m_AttackCoroutine = StartCoroutine(AttackCoroutine(character));
+            }
+        }
 
         if (!Paused)
         {
@@ -100,9 +131,47 @@ public class Character : Node, IMovable
         m_HealthBar.gameObject.SetActive(IsHealthBarActive);
     }
 
+    void CreateHealthBar()
+    {
+        m_HealthBar = HealthBar.Create(this, new Vector2(0, Size.y * 0.55f), "HealthBar");
+        m_HealthBar.Color = Color.red;
+    }
+
     void OnTurn(bool _Left)
     {
         foreach (Image part in Parts)
             part.FlipType = _Left ? ImageFlipType.VERTICAL : ImageFlipType.NONE;
     }
+
+    bool ShouldAttack(Character _Character)
+    {
+        GroupType group = _Character.Group;
+
+        switch (Group)
+        {
+            case GroupType.FRIENDLY:
+                return group == GroupType.HOSTILE;
+            case GroupType.PEACEFULL:
+                return false;
+            case GroupType.HOSTILE:
+                return group == GroupType.FRIENDLY || group == GroupType.PEACEFULL;
+            default:
+                return false;
+        }
+    }
+
+    #endregion
+
+    #region coroutines
+
+    IEnumerator AttackCoroutine(Character _Enemy)
+    {
+        _Enemy.Health -= Damage;
+
+        yield return new WaitForSeconds(AttackDelay);
+
+        m_AttackCoroutine = null;
+    }
+
+    #endregion
 }

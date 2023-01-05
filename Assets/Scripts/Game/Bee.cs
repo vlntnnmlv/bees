@@ -33,11 +33,16 @@ public abstract class Bee : Character
         set
         {
             m_Dead = value;
+
+            if (m_Dead)
+                Health = 0;
+
             m_Animator.SetBool("Dead", m_Dead);
         }
     }
 
     public bool GotHoney { get; set; }
+    public override GroupType Group => GroupType.FRIENDLY;
 
     #endregion
     
@@ -66,9 +71,9 @@ public abstract class Bee : Character
 
     #region service methods
 
-    protected void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo, float _Health, float _Speed)
+    protected void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
     {
-        base.Create(_HiveOffset, _Health, _Speed);
+        base.Create(_HiveOffset, _Health, _Speed, _Damage);
 
         StartCoroutine(FlyToPoint(_FlyTo));
     }
@@ -82,14 +87,6 @@ public abstract class Bee : Character
         {
             if (flower.CanBeUsed && !IsFlowering && !GotHoney && Vector2.Distance(Offset, flower.Offset) < 0.5f)
                 DoFlowering(flower);
-        }
-
-        Spider[] spiders = FindObjectsOfType<Spider>();
-        foreach (Spider s in spiders)
-        {
-            if (Vector2.Distance(Offset, s.Offset) < 0.5f)
-                s.Health -= 10;
-
         }
     }
 
@@ -146,7 +143,7 @@ public abstract class Bee : Character
     IEnumerator DropHoneyPotCoroutine(Vector2 _Dest)
     {
         m_Pot.gameObject.SetActive(false);
-        HoneyPot tmpPot = HoneyPot.Create(null, m_Pot.Offset, "tmpPot", true);
+        HoneyPot tmpPot = HoneyPot.Create(null, transform.TransformPoint(m_Pot.Offset), "tmpPot", true);
         tmpPot.transform.rotation = m_Pot.transform.rotation;
         Vector2  start  = tmpPot.Offset;
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 namespace VN
 {
+    [RequireComponent(typeof(RectTransform))]
     public partial class Node : MonoBehaviour
     {
         const float LAYER_OFFSET = 1f;
