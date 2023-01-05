@@ -18,8 +18,8 @@ namespace VN
 
         public Vector2 Offset
         {
-            get => transform.position;
-            set => transform.position = new Vector3(value.x, value.y, transform.position.z);
+            get => transform.localPosition;
+            set => transform.localPosition = new Vector3(value.x, value.y, transform.localPosition.z);
         }
 
         public Vector2 LocalScale

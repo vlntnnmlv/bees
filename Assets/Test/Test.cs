@@ -11,7 +11,7 @@ public class Test : MonoBehaviour
     void OnGUI()
     {
         if (Button(0, 0, "Spawn Bee Worker"))
-            BeeWorker.Create(null, Vector2.zero, "bee", Utility.RandomOffset);
+            BeeWorker.Create(null, Utility.RandomOffset, "bee", Utility.RandomOffset);
         if (Button(0, 1, "Spawn Bee Player") && player == null)
             player = BeePlayer.Create(null, Vector2.zero, "bee", Utility.RandomOffset);
         if (Button(0, 2, "Spawn Spider"))

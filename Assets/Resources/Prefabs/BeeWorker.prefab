@@ -144,6 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5b458d3995fc43159cac1ec06e51796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_HealthBarAlwaysActive: 0
   m_Pot: {fileID: 6063804270987440242}
 --- !u!95 &-6850571663886007341
 Animator:
@@ -321,6 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88320b614b38c4d1895b48a324538263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_FramePeriod: 0.01
   m_Sprites:
   - {fileID: -972871873, guid: 4f196d09988104f7783bd62a0536b1b6, type: 3}
   - {fileID: 260402002, guid: 4f196d09988104f7783bd62a0536b1b6, type: 3}

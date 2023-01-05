@@ -16,5 +16,8 @@ public class Spider : Character
         Direction = -Offset.normalized;
 
         base.OnUpdate();
+
+        foreach (SpriteAnimated sprite in GetComponentsInChildren<SpriteAnimated>())
+            sprite.Playing = (Direction - Vector2.zero).sqrMagnitude > 0.001f;
     }
 }

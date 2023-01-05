@@ -7,12 +7,15 @@ public class Character : Node, IMovable
     [SerializeField] bool    m_HealthBarAlwaysActive;
     HealthBar m_HealthBar;
     float     m_Health;
+    bool      m_Paused;
 
     public Vector2 Direction    { get; set; } = Vector2.zero;
     public float   Speed        { get; set; }
+
     public bool    Paused       { get; set; }
+
     public bool    Constrainted { get; set; } = true;
-    public float     Health
+    public float   Health
     {
         get => m_Health;
         set
