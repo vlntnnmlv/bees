@@ -97,10 +97,11 @@ public class Character : Node, IMovable
         Character[] characters = FindObjectsOfType<Character>();
         foreach (Character character in characters)
         {
-            if (ShouldAttack(character) && Vector2.Distance(Offset, character.Offset) < AttackDistance && m_AttackCoroutine == null)
+            if (ShouldAttack(character))
             {
                 Debug.Log($"[Character] {this.name} attacks {character.name} with {Damage} damage.");
-                m_AttackCoroutine = StartCoroutine(AttackCoroutine(character));
+
+                Attack(character);
             }
         }
 
@@ -131,6 +132,7 @@ public class Character : Node, IMovable
         m_HealthBar.gameObject.SetActive(IsHealthBarActive);
     }
 
+
     void CreateHealthBar()
     {
         m_HealthBar = HealthBar.Create(this, new Vector2(0, Size.y * 0.55f), "HealthBar");
@@ -147,6 +149,9 @@ public class Character : Node, IMovable
     {
         GroupType group = _Character.Group;
 
+        if (Vector2.Distance(Offset, _Character.Offset) > AttackDistance || m_AttackCoroutine != null)
+            return false;
+
         switch (Group)
         {
             case GroupType.FRIENDLY:
@@ -160,6 +165,11 @@ public class Character : Node, IMovable
         }
     }
 
+    void Attack(Character _Character)
+    {
+        m_AttackCoroutine = StartCoroutine(AttackCoroutine(_Character));
+    }
+
     #endregion
 
     #region coroutines
@@ -170,6 +180,7 @@ public class Character : Node, IMovable
 
         _Enemy.Health -= Damage;
 
+        // create effect depending on damage
         GameObject p = null;
         if (_Enemy.Health == 0)
         {
@@ -183,8 +194,10 @@ public class Character : Node, IMovable
             p.transform.localPosition = Vector2.zero;
         }
 
+        // wait for attack delay
         yield return new WaitForSeconds(AttackDelay);
 
+        //destroy effect
         Destroy(p, 0);
 
         m_AttackCoroutine = null;

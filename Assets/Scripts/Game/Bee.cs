@@ -147,6 +147,8 @@ public abstract class Bee : Character
         tmpPot.transform.rotation = m_Pot.transform.rotation;
         Vector2  start  = tmpPot.Offset;
 
+        FindObjectOfType<GameManager>().IncresePoints();
+
         yield return StartCoroutine(Coroutines.Update(
                 () => GotHoney = false,
                 _Phase => tmpPot.Offset = Vector2.Lerp(start, _Dest, _Phase),
