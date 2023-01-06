@@ -15,6 +15,12 @@ public class Spider : Character
 
     #endregion
 
+    #region attributes
+
+    Vector2 m_Destination;
+
+    #endregion
+
     #region properties
 
     public override GroupType Group => GroupType.HOSTILE;
@@ -26,16 +32,17 @@ public class Spider : Character
     new void Create(Vector2 _Offset, float _Health, float _Speed, float _Damage)
     {
         base.Create(_Offset, _Health, _Speed, _Damage);
-        Direction = (Utility.RandomCenterOffset -Offset).normalized;
+        m_Destination = Utility.RandomCenterOffset;
     }
 
     protected override void OnUpdate()
     {
+        Direction = (m_Destination - Offset).normalized;
 
         base.OnUpdate();
 
         foreach (SpriteAnimated sprite in GetComponentsInChildren<SpriteAnimated>())
-            sprite.Playing = (Direction - Vector2.zero).sqrMagnitude > 0.001f;
+            sprite.Playing = (Direction - m_Destination).sqrMagnitude > 0.001f;
     }
 
     #endregion
