@@ -9,7 +9,7 @@ public class Hive : Character
     new public static Hive Create(Node _Parent, Vector2 _Offset, string _ID)
     {
         Hive hive = Utility.LoadObject<Hive>("Prefabs/Hive", _ID, _Parent);
-        hive.Create(_Offset, 500, 0, 0);
+        hive.Create(_Offset, 250, 0, 0);
 
         return hive;
     }
@@ -23,8 +23,8 @@ public class Hive : Character
 
     #region attributes
 
-    int            m_BeesCount      = 1;
-    int            m_HoneyPotsCount = 0;
+    int            m_BeesCount         = 1;
+    int            m_HoneyPotsCount    = 0;
     float          m_TimeFlowerSpawned = 0;
     List<HoneyPot> m_HoneyPotIcons = new List<HoneyPot>();
     
@@ -43,7 +43,7 @@ public class Hive : Character
 
     void Start()
     {
-        BeePlayer.Create(null, Vector2.zero, "BeePLayer", Vector2.zero);
+        BeePlayer.Create(null, Vector2.zero, "BeePlayer", Vector2.zero);
         Flower.Create(null, VN.Utility.RandomOffset, "flower");
         m_TimeFlowerSpawned = Time.time;
     }

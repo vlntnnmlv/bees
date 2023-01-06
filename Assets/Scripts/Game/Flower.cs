@@ -41,7 +41,6 @@ public class Flower : Image
         base.Create(_Offset);
 
         GetComponent<SpriteAnimated>().OnAnimationPlayed += () => m_Appeared = true;
-        m_Animator.SetTrigger("Disappear");
         m_CreationTime = Time.time;
     }
 
@@ -50,8 +49,15 @@ public class Flower : Image
         base.OnUpdate();
 
         if (Time.time - m_CreationTime > LIFE_TIME)
+        {
             Used = true;
-            
+            Disappear();
+        }
+    }
+
+    public void Disappear()
+    {
+        m_Animator.SetTrigger("Disappear");
     }
 
     public void OnAppear()

@@ -45,7 +45,6 @@ class BeeWorker : Bee
     {
         if (!GotHoney && !IsFlowering && Time.time - m_CreationTime > LIFE_TIME)
         {
-            GetComponentInChildren<SpriteAnimated>().Playing = false;
             Paused = true;
             Dead   = true;
         }

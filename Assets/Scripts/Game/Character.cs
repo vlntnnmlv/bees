@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections;
 using VN;
+using TMPro;
 
 public class Character : Node, IMovable
 {
@@ -19,17 +20,17 @@ public class Character : Node, IMovable
     #region attributes
 
     [SerializeField] bool    m_IsHealthBarActive;
-    HealthBar m_HealthBar;
-    float     m_Health;
-    bool      m_Paused;
-    Coroutine m_AttackCoroutine;
-
+    HealthBar                m_HealthBar;
+    float                    m_Health;
+    bool                     m_Paused;
+    Coroutine                m_AttackCoroutine;
 
     #endregion
 
     #region properties
 
     public bool    Paused         { get; set; }
+    public bool    Dead           { get; set; }
     public bool    Constrainted   { get; set; } = true;
     public Vector2 Direction      { get; set; } = Vector2.zero;
     public float   Speed          { get; set; }
@@ -52,7 +53,7 @@ public class Character : Node, IMovable
             if (value <= 0)
             {
                 m_Health = 0;
-                Destroy(gameObject);
+                Dead = true;
             }
 
             if (IsHealthBarActive && m_HealthBar != null)
@@ -77,6 +78,19 @@ public class Character : Node, IMovable
 
     #endregion
 
+    #region engine methods
+
+    void LateUpdate()
+    {
+        if (Dead)
+        {
+            InitDisappearEffect(Offset);
+            Destroy(gameObject);
+        }
+    }
+
+    #endregion
+
     #region service methods
 
     protected void Create(Vector2 _Offset, float _Health, float _Speed, float _Damage)
@@ -94,6 +108,15 @@ public class Character : Node, IMovable
     {
         base.OnUpdate();
 
+        DoAttack();
+        DoMovement();
+
+        m_HealthBar.gameObject.SetActive(IsHealthBarActive);
+    }
+
+
+    void DoAttack()
+    {
         Character[] characters = FindObjectsOfType<Character>();
         foreach (Character character in characters)
         {
@@ -104,45 +127,6 @@ public class Character : Node, IMovable
                 Attack(character);
             }
         }
-
-        if (!Paused)
-        {
-            Vector2 newOffset = Offset + Direction * Speed * Time.deltaTime;
-            if (Constrainted)
-            {
-                if (newOffset.x > Utility.Width/2)
-                    newOffset.x = -Utility.Width/2;
-                if (newOffset.x < -Utility.Width/2)
-                    newOffset.x = Utility.Width/2;
-
-                if (newOffset.y > Utility.Height/2)
-                    newOffset.y = -Utility.Height/2;
-                if (newOffset.y < -Utility.Height/2)
-                    newOffset.y = Utility.Height/2;
-            }
-
-            Offset = newOffset;
-        }
-
-        if (Direction.x > 0)
-            OnTurn(false);
-        if (Direction.x < 0)
-            OnTurn(true);
-
-        m_HealthBar.gameObject.SetActive(IsHealthBarActive);
-    }
-
-
-    void CreateHealthBar()
-    {
-        m_HealthBar = HealthBar.Create(this, new Vector2(0, Size.y * 0.55f), "HealthBar");
-        m_HealthBar.Color = Color.red;
-    }
-
-    void OnTurn(bool _Left)
-    {
-        foreach (Image part in Parts)
-            part.FlipType = _Left ? ImageFlipType.VERTICAL : ImageFlipType.NONE;
     }
 
     bool ShouldAttack(Character _Character)
@@ -170,6 +154,60 @@ public class Character : Node, IMovable
         m_AttackCoroutine = StartCoroutine(AttackCoroutine(_Character));
     }
 
+    void DoMovement()
+    {
+        if (!Paused)
+        {
+            Vector2 newOffset = Offset + Direction * Speed * Time.deltaTime;
+            if (Constrainted)
+            {
+                if (newOffset.x > Utility.Width/2)
+                    newOffset.x = -Utility.Width/2;
+                if (newOffset.x < -Utility.Width/2)
+                    newOffset.x = Utility.Width/2;
+
+                if (newOffset.y > Utility.Height/2)
+                    newOffset.y = -Utility.Height/2;
+                if (newOffset.y < -Utility.Height/2)
+                    newOffset.y = Utility.Height/2;
+            }
+
+            Offset = newOffset;
+        }
+
+        if (Direction.x > 0)
+            OnTurn(false);
+        if (Direction.x < 0)
+            OnTurn(true);
+    }
+
+    void CreateHealthBar()
+    {
+        m_HealthBar = HealthBar.Create(this, new Vector2(0, Size.y * 0.55f), "HealthBar");
+        m_HealthBar.Color = Color.red;
+    }
+
+    void OnTurn(bool _Left)
+    {
+        foreach (Image part in Parts)
+            part.FlipType = _Left ? ImageFlipType.VERTICAL : ImageFlipType.NONE;
+    }
+
+    GameObject InitHitEffect(Character _Character)
+    {
+        GameObject fx = Utility.Load<GameObject>("Prefabs/FX/HitEffect");
+        fx.transform.SetParent(_Character.transform);
+        fx.transform.localPosition = Vector2.zero;
+        return fx;
+    }
+
+    GameObject InitDisappearEffect(Vector2 _Pos)
+    {
+        GameObject fx = Utility.Load<GameObject>("Prefabs/FX/DisappearEffect");
+        fx.transform.position = _Pos;
+        return fx;
+    }
+
     #endregion
 
     #region coroutines
@@ -179,28 +217,36 @@ public class Character : Node, IMovable
         Vector2 enemyOffset = _Enemy.Offset;
 
         _Enemy.Health -= Damage;
+        // StartCoroutine(ShowDamageCoroutine(_Enemy, Damage));
 
-        // create effect depending on damage
-        GameObject p = null;
         if (_Enemy.Health == 0)
-        {
-            p = Utility.Load<GameObject>("Prefabs/FX/DisappearEffect");
-            p.transform.position = enemyOffset;
-        }
-        else
-        {
-            p = Utility.Load<GameObject>("Prefabs/FX/HitEffect");
-            p.transform.SetParent(_Enemy.transform);
-            p.transform.localPosition = Vector2.zero;
-        }
+            FindObjectOfType<GameManager>().IncresePoints();
+
+        // create effect depending on health
+        GameObject fx = _Enemy.Health == 0 ? InitDisappearEffect(enemyOffset) : InitHitEffect(_Enemy);
 
         // wait for attack delay
         yield return new WaitForSeconds(AttackDelay);
 
-        //destroy effect
-        Destroy(p, 0);
-
         m_AttackCoroutine = null;
+    }
+
+    IEnumerator ShowDamageCoroutine(Character _Character, float _Damage)
+    {
+        TextMeshProUGUI txt = Instantiate(Resources.Load<TextMeshProUGUI>("Prefabs/UI/Text"));
+        txt.transform.position = _Character.transform.TransformPoint(_Character.Offset);
+        txt.text = _Damage.ToString();
+
+        Vector2 posStart = txt.transform.position;
+        yield return Coroutines.Update(
+            null,
+            _Phase => {
+                txt.transform.position = Vector2.Lerp(posStart, posStart + Vector2.one * Size / 2, _Phase);
+                txt.color = Color.Lerp(Color.black, Color.clear, _Phase);
+            },
+            () => Destroy(txt.gameObject),
+            0.5f
+        );
     }
 
     #endregion

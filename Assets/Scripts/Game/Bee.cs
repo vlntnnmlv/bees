@@ -10,7 +10,6 @@ public abstract class Bee : Character
 
     protected Animator m_Animator;
     bool               m_IsFlowering;
-    bool               m_Dead;
 
     #endregion
 
@@ -27,21 +26,7 @@ public abstract class Bee : Character
         }
     }
 
-    protected bool Dead
-    {
-        get => m_Dead;
-        set
-        {
-            m_Dead = value;
-
-            if (m_Dead)
-                Health = 0;
-
-            m_Animator.SetBool("Dead", m_Dead);
-        }
-    }
-
-    public bool GotHoney { get; set; }
+    public          bool      GotHoney { get; set; }
     public override GroupType Group => GroupType.FRIENDLY;
 
     #endregion
@@ -93,7 +78,7 @@ public abstract class Bee : Character
     void DoFlowering(Flower _Flower)
     {
         _Flower.Used = true;
-        StartCoroutine(FloweringCoroutine());
+        StartCoroutine(FloweringCoroutine(_Flower));
     }
 
     void SetHoneyPot()
@@ -116,11 +101,12 @@ public abstract class Bee : Character
         );
     }
 
-    IEnumerator FloweringCoroutine()
+    IEnumerator FloweringCoroutine(Flower _Flower)
     {
         IsFlowering = true;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1);
         IsFlowering = false;
+        _Flower.Disappear();
         SetHoneyPot();
     }
 
