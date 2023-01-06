@@ -166,9 +166,26 @@ public class Character : Node, IMovable
 
     IEnumerator AttackCoroutine(Character _Enemy)
     {
+        Vector2 enemyOffset = _Enemy.Offset;
+
         _Enemy.Health -= Damage;
 
+        GameObject p = null;
+        if (_Enemy.Health == 0)
+        {
+            p = Utility.Load<GameObject>("Prefabs/FX/DisappearEffect");
+            p.transform.position = enemyOffset;
+        }
+        else
+        {
+            p = Utility.Load<GameObject>("Prefabs/FX/HitEffect");
+            p.transform.SetParent(_Enemy.transform);
+            p.transform.localPosition = Vector2.zero;
+        }
+
         yield return new WaitForSeconds(AttackDelay);
+
+        Destroy(p, 0);
 
         m_AttackCoroutine = null;
     }

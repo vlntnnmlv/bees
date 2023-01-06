@@ -41,7 +41,7 @@ public class Controller2D : MonoBehaviour
 
         {
             // click controls and keyboard controls
-            if (Input.GetMouseButton(0) && (m_Movable.Offset - Utility.MousePositionWorld).magnitude > 0.01f)
+            if (Input.GetMouseButton(0) && (m_Movable.Offset - Utility.MousePositionWorld).sqrMagnitude > 0.01f)
             {
                 newDirection = (Utility.MousePositionWorld - m_Movable.Offset);
             }

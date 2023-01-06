@@ -64,7 +64,7 @@ namespace VN
         public void SetParent(Node _Parent, bool _WorldPositionStays = false)
         {
             if (_Parent == null || _Parent.gameObject == null || _Parent.transform == null)
-                transform.parent = null;
+                transform.SetParent(null, true);
             else
                 transform.SetParent(_Parent.transform, _WorldPositionStays);
 

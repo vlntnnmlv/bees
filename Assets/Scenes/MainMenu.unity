@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 137249230}
   - component: {fileID: 137249229}
+  - component: {fileID: 137249231}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -217,6 +218,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &137249231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137249228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1 &254364402
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,6 +318,7 @@ GameObject:
   - component: {fileID: 269372578}
   - component: {fileID: 269372577}
   - component: {fileID: 269372576}
+  - component: {fileID: 269372579}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -368,7 +390,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 269372577}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 269372579}
+        m_TargetAssemblyTypeName: PlayButton, Assembly-CSharp
+        m_MethodName: OnPlayButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: OnPlayButtonClicked
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &269372577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,6 +441,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 269372574}
   m_CullTransparentMesh: 1
+--- !u!114 &269372579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 269372574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d88012ca09f86420abd02ce5a45d6216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1149792910
 GameObject:
   m_ObjectHideFlags: 0

@@ -37,7 +37,15 @@ public static class Utility
 
     public static T Load<T>(string _Path) where T : Object
     {
-        T obj = Object.Instantiate(Resources.Load<T>(_Path));
+        T res = Resources.Load<T>(_Path);
+
+        if (res == null)
+        {
+            Debug.Log("Resource not found: " + _Path);
+            return null;
+        }
+
+        T obj = Object.Instantiate(res);
         return obj;
     }
 
