@@ -23,9 +23,14 @@ public class Spider : Character
 
     #region service methods
 
+    new void Create(Vector2 _Offset, float _Health, float _Speed, float _Damage)
+    {
+        base.Create(_Offset, _Health, _Speed, _Damage);
+        Direction = (Utility.RandomCenterOffset -Offset).normalized;
+    }
+
     protected override void OnUpdate()
     {
-        Direction = -Offset.normalized;
 
         base.OnUpdate();
 

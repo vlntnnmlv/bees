@@ -43,7 +43,7 @@ class BeeWorker : Bee
 
     protected override void OnUpdate()
     {
-        if (!GotHoney && !IsFlowering && Time.time - m_CreationTime > LIFE_TIME)
+        if (!GotHoney && !IsFlowering && m_DropHoneyPotCoroutine == null && Time.time - m_CreationTime > LIFE_TIME)
         {
             Paused = true;
             Dead   = true;

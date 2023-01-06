@@ -8,8 +8,9 @@ public abstract class Bee : Character
 
     [SerializeField] protected Node m_Pot;
 
-    protected Animator m_Animator;
-    bool               m_IsFlowering;
+    protected Animator  m_Animator;
+    protected Coroutine m_DropHoneyPotCoroutine = null;
+    bool                m_IsFlowering;
 
     #endregion
 
@@ -23,6 +24,8 @@ public abstract class Bee : Character
             Paused = value;
             m_IsFlowering = value;
             m_Animator.SetBool("IsFlowering", m_IsFlowering);
+            if (m_IsFlowering)
+                SoundMaker.PlaySound("flowering", WorldOffset);
         }
     }
 
@@ -44,7 +47,7 @@ public abstract class Bee : Character
     
     public void DropHoneyPot(Vector2 _Dest)
     {
-        StartCoroutine(DropHoneyPotCoroutine(_Dest));
+        m_DropHoneyPotCoroutine = StartCoroutine(DropHoneyPotCoroutine(_Dest));
     }
 
     public void OnDied()
@@ -146,7 +149,11 @@ public abstract class Bee : Character
         yield return StartCoroutine(Coroutines.Update(
                 null,
                 _Phase => tmpPot.LocalScale = Vector2.one * (1 - _Phase),
-                () => Destroy(tmpPot.gameObject),
+                () =>
+                {
+                    m_DropHoneyPotCoroutine = null;
+                    Destroy(tmpPot.gameObject);
+                },
                 0.4f
             )
         );

@@ -24,7 +24,7 @@ class HoneyPot : Image
     {
         yield return Coroutines.Update(
             () => LocalScale = Vector2.zero,
-            _Phase => LocalScale = Vector2.Lerp(Vector2.zero, Vector2.one, _Phase),
+            _Phase => LocalScale = Vector2.Lerp(Vector2.zero, Vector2.one * 2.3f, _Phase),
             null,
             0.5f
         );

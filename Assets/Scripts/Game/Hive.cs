@@ -17,7 +17,7 @@ public class Hive : Character
     #endregion
 
     #region constants
-    const float POT_ICON_MARGIN = 0.1f;
+    const float POT_ICON_MARGIN = 0.3f;
 
     #endregion
 
@@ -43,8 +43,7 @@ public class Hive : Character
 
     void Start()
     {
-        BeePlayer.Create(null, Vector2.zero, "BeePlayer", Vector2.zero);
-        Flower.Create(null, VN.Utility.RandomOffset, "flower");
+        Flower.Create(null, VN.Utility.RandomGroundOffset, "flower");
         m_TimeFlowerSpawned = Time.time;
     }
 
@@ -58,7 +57,7 @@ public class Hive : Character
 
         if (Time.time - m_TimeFlowerSpawned > PeriodFlowerSpawn)
         {
-            Flower.Create(null, VN.Utility.RandomOffset, "flower");
+            Flower.Create(null, VN.Utility.RandomGroundOffset, "flower");
             m_TimeFlowerSpawned = Time.time;
         }
 
@@ -77,7 +76,7 @@ public class Hive : Character
                     ClearHoneyPotIcons();
                 }
 
-                Flower.Create(null, VN.Utility.RandomOffset, "flower");
+                Flower.Create(null, VN.Utility.RandomGroundOffset, "flower");
             }
         }
     }

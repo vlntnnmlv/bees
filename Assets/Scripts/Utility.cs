@@ -9,6 +9,27 @@ public static class Utility
     public static float         Height     => Camera.main.orthographicSize * 2;
     public static float         Width      => Height * Camera.main.aspect;
 
+    public static Vector2       RandomGroundOffset => new Vector2(
+        Random.Range(
+                -Width/2 + SCREEN_MARGIN,
+                Width/2 - SCREEN_MARGIN
+            ),
+        Random.Range(
+                -Height/2 + SCREEN_MARGIN,
+                0
+            )
+        );
+    public static Vector2       RandomSkyOffset => new Vector2(
+        Random.Range(
+                -Width/2 + SCREEN_MARGIN,
+                Width/2 - SCREEN_MARGIN
+            ),
+        Random.Range(
+                0,
+                Height/2 - SCREEN_MARGIN
+            )
+        );
+
     public static Vector2       RandomOffset => new Vector2(
         Random.Range(
                 -Width/2 + SCREEN_MARGIN,
@@ -19,6 +40,8 @@ public static class Utility
                 Height/2 - SCREEN_MARGIN
             )
         );
+
+    public static Vector2 RandomCenterOffset => Vector2.one * Random.Range(-0.5f, 0.5f);
 
     public static Vector2 TopLeftCornerOffset => new Vector2(-Width/2 + SCREEN_MARGIN, Height/2 - SCREEN_MARGIN);
 

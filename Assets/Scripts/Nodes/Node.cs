@@ -17,11 +17,18 @@ namespace VN
                 );
         }
 
+        public float WorldLayer
+        {
+            get => (Parent == null ? 0 : Parent.WorldLayer) + Layer;
+        }
+
         public Vector2 Offset
         {
             get => transform.localPosition;
             set => transform.localPosition = new Vector3(value.x, value.y, transform.localPosition.z);
         }
+
+        public Vector2 WorldOffset => transform.position;
 
         public Vector2 LocalScale
         {
@@ -82,8 +89,8 @@ namespace VN
             if (Parent != null && Parent.gameObject != null)
             {
                 Node[] children = Parent.GetComponentsInChildren<Node>();
-                float maxLayer = children.Select(_C => _C.Layer).Max();
-                Layer = maxLayer + LAYER_OFFSET;
+                float maxLayer = children.Select(_C => _C.WorldLayer).Max();
+                Layer = maxLayer - Parent.WorldLayer + LAYER_OFFSET;
             }
             else
             {
@@ -91,7 +98,8 @@ namespace VN
                     .GetActiveScene()
                     .GetRootGameObjects()
                     .Where(_G => _G.GetComponent<Node>() != null)
-                    .Select(_N => _N.layer)
+                    .Select(_N => _N.GetComponent<Node>())
+                    .Select(_N => _N.WorldLayer)
                     .Max();
                 Layer = maxLayer + LAYER_OFFSET;
             }

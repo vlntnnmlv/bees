@@ -84,7 +84,7 @@ public class Character : Node, IMovable
     {
         if (Dead)
         {
-            InitDisappearEffect(Offset);
+            InitDisappearFX(Offset);
             Destroy(gameObject);
         }
     }
@@ -193,37 +193,45 @@ public class Character : Node, IMovable
             part.FlipType = _Left ? ImageFlipType.VERTICAL : ImageFlipType.NONE;
     }
 
-    GameObject InitHitEffect(Character _Character)
+    Effect InitHitFX(Character _Character)
     {
-        GameObject fx = Utility.Load<GameObject>("Prefabs/FX/HitEffect");
-        fx.transform.SetParent(_Character.transform);
-        fx.transform.localPosition = Vector2.zero;
+        Effect fx = Effect.Create(_Character, Vector2.zero, "hit_effect", EffectType.Hit);
+        fx.LocalScale = Vector2.one * Mathf.Max(Size.x, Size.y);
         return fx;
     }
 
-    GameObject InitDisappearEffect(Vector2 _Pos)
+    Effect InitDisappearFX(Vector2 _Pos)
     {
-        GameObject fx = Utility.Load<GameObject>("Prefabs/FX/DisappearEffect");
-        fx.transform.position = _Pos;
+        Effect fx = Effect.Create(null, _Pos, "disappear_fx", EffectType.Disappear);
+        fx.LocalScale = Vector2.one * Mathf.Max(Size.x, Size.y);
         return fx;
     }
 
     #endregion
 
     #region coroutines
-
+    GameManager GameManager => FindObjectOfType<GameManager>();
     IEnumerator AttackCoroutine(Character _Enemy)
     {
         Vector2 enemyOffset = _Enemy.Offset;
 
+        GameManager.StartCoroutine(
+            ShowDamageCoroutine(
+                    _Enemy.WorldOffset,
+                    Vector2.one * Mathf.Max(_Enemy.Size.x, _Enemy.Size.y),
+                    Damage,
+                    _Enemy.Group == GroupType.HOSTILE ? Color.green : Color.red
+                    )
+                );
+
         _Enemy.Health -= Damage;
-        // StartCoroutine(ShowDamageCoroutine(_Enemy, Damage));
+        SoundMaker.PlaySound("hit", _Enemy.WorldOffset);
 
         if (_Enemy.Health == 0)
-            FindObjectOfType<GameManager>().IncresePoints();
+            GameManager.IncresePoints();
 
         // create effect depending on health
-        GameObject fx = _Enemy.Health == 0 ? InitDisappearEffect(enemyOffset) : InitHitEffect(_Enemy);
+        Effect fx = _Enemy.Health == 0 ? InitDisappearFX(enemyOffset) : InitHitFX(_Enemy);
 
         // wait for attack delay
         yield return new WaitForSeconds(AttackDelay);
@@ -231,21 +239,24 @@ public class Character : Node, IMovable
         m_AttackCoroutine = null;
     }
 
-    IEnumerator ShowDamageCoroutine(Character _Character, float _Damage)
+    IEnumerator ShowDamageCoroutine(Vector2 _Pos, Vector2 _Size, float _Damage, Color _Color)
     {
         TextMeshProUGUI txt = Instantiate(Resources.Load<TextMeshProUGUI>("Prefabs/UI/Text"));
-        txt.transform.position = _Character.transform.TransformPoint(_Character.Offset);
+        txt.transform.position = _Pos;
         txt.text = _Damage.ToString();
+        txt.transform.localScale = _Size;
+        Color startColor = _Color;
+        txt.color = startColor;
 
         Vector2 posStart = txt.transform.position;
         yield return Coroutines.Update(
             null,
             _Phase => {
-                txt.transform.position = Vector2.Lerp(posStart, posStart + Vector2.one * Size / 2, _Phase);
-                txt.color = Color.Lerp(Color.black, Color.clear, _Phase);
+                txt.transform.position = Vector2.Lerp(posStart, posStart + Vector2.one * _Size / 2, _Phase);
+                txt.color = Color.Lerp(startColor, Color.clear, _Phase);
             },
             () => Destroy(txt.gameObject),
-            0.5f
+            1f
         );
     }
 
