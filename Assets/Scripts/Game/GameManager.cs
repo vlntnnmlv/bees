@@ -5,7 +5,9 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    float SPIDER_SPAWN_INTERVAL = 3.5f;
     [SerializeField] TextMeshProUGUI m_Text;
+
     float     m_SpiderSpawnedTime = 0;
     Hive      m_Hive;
     BeePlayer m_Player;
@@ -16,14 +18,14 @@ public class GameManager : MonoBehaviour
         m_Player = BeePlayer.Create(null, Vector2.zero, "BeePlayer", Vector2.zero);
     }
 
-    public void IncresePoints()
+    public void IncreseScore()
     {
         m_Text.text = (int.Parse(m_Text.text) + 1).ToString();
     }
 
     void Update()
     {
-        if (Time.time - m_SpiderSpawnedTime > 5)
+        if (Time.time - m_SpiderSpawnedTime > SPIDER_SPAWN_INTERVAL)
         {
             Spider.Create(null, Utility.RandomGroundOffset, "spider");
             m_SpiderSpawnedTime = Time.time;

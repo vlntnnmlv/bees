@@ -22,6 +22,7 @@ public class Character : Node, IMovable
     [SerializeField] bool    m_IsHealthBarActive;
     HealthBar                m_HealthBar;
     float                    m_Health;
+    bool                     m_Appeared;
     bool                     m_Paused;
     Coroutine                m_AttackCoroutine;
 
@@ -76,6 +77,8 @@ public class Character : Node, IMovable
         }
     }
 
+    GameManager GameManager => FindObjectOfType<GameManager>();
+
     #endregion
 
     #region engine methods
@@ -102,6 +105,8 @@ public class Character : Node, IMovable
         Health = _Health;
         Speed  = _Speed;
         Damage = _Damage;
+
+        Appear();
     }
 
     protected override void OnUpdate()
@@ -114,6 +119,10 @@ public class Character : Node, IMovable
         m_HealthBar.gameObject.SetActive(IsHealthBarActive);
     }
 
+    protected void Appear()
+    {
+        StartCoroutine(AppearCoroutine());
+    }
 
     void DoAttack()
     {
@@ -156,7 +165,7 @@ public class Character : Node, IMovable
 
     void DoMovement()
     {
-        if (!Paused)
+        if (!Paused && m_Appeared)
         {
             Vector2 newOffset = Offset + Direction * Speed * Time.deltaTime;
             if (Constrainted)
@@ -210,7 +219,7 @@ public class Character : Node, IMovable
     #endregion
 
     #region coroutines
-    GameManager GameManager => FindObjectOfType<GameManager>();
+
     IEnumerator AttackCoroutine(Character _Enemy)
     {
         Vector2 enemyOffset = _Enemy.Offset;
@@ -228,7 +237,7 @@ public class Character : Node, IMovable
         SoundMaker.PlaySound("hit", _Enemy.WorldOffset);
 
         if (_Enemy.Health == 0)
-            GameManager.IncresePoints();
+            GameManager.IncreseScore();
 
         // create effect depending on health
         Effect fx = _Enemy.Health == 0 ? InitDisappearFX(enemyOffset) : InitHitFX(_Enemy);
@@ -257,6 +266,22 @@ public class Character : Node, IMovable
             },
             () => Destroy(txt.gameObject),
             1f
+        );
+    }
+
+    protected IEnumerator AppearCoroutine()
+    {
+        yield return DefaultAppearCoroutine();
+        m_Appeared = true;
+    }
+
+    protected virtual IEnumerator DefaultAppearCoroutine()
+    {
+        yield return Coroutines.Update(
+            null,
+            _Phase => LocalScale = Vector2.Lerp(Vector2.zero, Vector2.one, _Phase),
+            null,
+            0.5f
         );
     }
 

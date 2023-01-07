@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using VN;
 
 public class Spider : Character
@@ -32,6 +33,7 @@ public class Spider : Character
     new void Create(Vector2 _Offset, float _Health, float _Speed, float _Damage)
     {
         base.Create(_Offset, _Health, _Speed, _Damage);
+
         m_Destination = Utility.RandomCenterOffset;
     }
 
@@ -42,7 +44,7 @@ public class Spider : Character
         base.OnUpdate();
 
         foreach (SpriteAnimated sprite in GetComponentsInChildren<SpriteAnimated>())
-            sprite.Playing = (Direction - m_Destination).sqrMagnitude > 0.001f;
+            sprite.Playing = (Offset - m_Destination).sqrMagnitude > 0.001f;
     }
 
     #endregion

@@ -11,6 +11,7 @@ public abstract class Bee : Character
     protected Animator  m_Animator;
     protected Coroutine m_DropHoneyPotCoroutine = null;
     bool                m_IsFlowering;
+    Vector2             m_FlyTo;
 
     #endregion
 
@@ -63,7 +64,7 @@ public abstract class Bee : Character
     {
         base.Create(_HiveOffset, _Health, _Speed, _Damage);
 
-        StartCoroutine(FlyToPoint(_FlyTo));
+        m_FlyTo = _FlyTo;
     }
 
     protected override void OnUpdate()
@@ -93,14 +94,19 @@ public abstract class Bee : Character
 
     #region coroutines
 
-    IEnumerator FlyToPoint(Vector2 _Dest)
+    protected override IEnumerator DefaultAppearCoroutine()
+    {
+        yield return StartCoroutine(FlyToPoint());
+    }
+
+    IEnumerator FlyToPoint()
     {
         Vector2 start = Offset;
         yield return Coroutines.Update(
             null,
-            _ => Direction = (_Dest - start).normalized,
+            _ => Direction = (m_FlyTo - start).normalized,
             null,
-            Vector2.Distance(start, _Dest) / Speed
+            Vector2.Distance(start, m_FlyTo) / Speed
         );
     }
 
@@ -136,7 +142,7 @@ public abstract class Bee : Character
         tmpPot.transform.rotation = m_Pot.transform.rotation;
         Vector2  start  = tmpPot.Offset;
 
-        FindObjectOfType<GameManager>().IncresePoints();
+        FindObjectOfType<GameManager>().IncreseScore();
 
         yield return StartCoroutine(Coroutines.Update(
                 () => GotHoney = false,

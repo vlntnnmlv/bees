@@ -20,16 +20,18 @@ public class Image : Node
 
     #region properties
 
+    public SpriteRenderer SpriteRenderer => m_SpriteRenderer ??= GetComponent<SpriteRenderer>();
+
     public Vector2 Size
     {
-        get => m_SpriteRenderer.sprite.bounds.size;
-        set => m_SpriteRenderer.size = value;
+        get => SpriteRenderer.sprite.bounds.size;
+        set => SpriteRenderer.size = value;
     }
 
     public Color Color
     {
-        get => m_SpriteRenderer.color;
-        set => m_SpriteRenderer.color = value;
+        get => SpriteRenderer.color;
+        set => SpriteRenderer.color = value;
     }
 
     public ImageFlipType FlipType
@@ -39,16 +41,16 @@ public class Image : Node
             switch (value)
             {
                 case ImageFlipType.NONE:
-                    m_SpriteRenderer.flipX = false;
-                    m_SpriteRenderer.flipY = false;
+                    SpriteRenderer.flipX = false;
+                    SpriteRenderer.flipY = false;
                     break;
                 case ImageFlipType.HORIZONTAL:
-                    m_SpriteRenderer.flipX = false;
-                    m_SpriteRenderer.flipY = true;
+                    SpriteRenderer.flipX = false;
+                    SpriteRenderer.flipY = true;
                     break;
                 case ImageFlipType.VERTICAL:
-                    m_SpriteRenderer.flipX = true;
-                    m_SpriteRenderer.flipY = false;
+                    SpriteRenderer.flipX = true;
+                    SpriteRenderer.flipY = false;
                     break;
             }
         }
@@ -64,11 +66,6 @@ public class Image : Node
 
     #region engine methods
 
-    void Awake()
-    {
-        m_SpriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
     #endregion
 
     #region service methods
@@ -78,7 +75,7 @@ public class Image : Node
         base.Create(_Offset);
 
         if (_Sprite.Length != 0 && _Sprite != null)
-            m_SpriteRenderer.sprite = Resources.Load<Sprite>($"Sprites/{_Sprite}");
+            SpriteRenderer.sprite = Resources.Load<Sprite>($"Sprites/{_Sprite}");
     }
 
     #endregion

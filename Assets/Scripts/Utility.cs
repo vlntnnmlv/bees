@@ -8,6 +8,7 @@ public static class Utility
     const float SCREEN_MARGIN = 0.5f;
     public static float         Height     => Camera.main.orthographicSize * 2;
     public static float         Width      => Height * Camera.main.aspect;
+    public static Vector2       Size       => new Vector2(Width, Height);
 
     public static Vector2       RandomGroundOffset => new Vector2(
         Random.Range(
@@ -41,7 +42,7 @@ public static class Utility
             )
         );
 
-    public static Vector2 RandomCenterOffset => Vector2.one * Random.Range(-0.5f, 0.5f);
+    public static Vector2 RandomCenterOffset => Vector2.one * Random.Range(-0.4f, 0.4f);
 
     public static Vector2 TopLeftCornerOffset => new Vector2(-Width/2 + SCREEN_MARGIN, Height/2 - SCREEN_MARGIN);
 
