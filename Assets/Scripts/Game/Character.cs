@@ -71,8 +71,8 @@ public class Character : Node, IMovable
         get
         {
             return new Vector2(
-                Parts.Max(part => part.Size.x),
-                Parts.Max(part => part.Size.y)
+                Parts.Max(part => part.LocalRect.width),
+                Parts.Max(part => part.LocalRect.height)
             );
         }
     }
@@ -87,7 +87,7 @@ public class Character : Node, IMovable
     {
         if (Dead)
         {
-            InitDisappearFX(Offset);
+            InitDisappearFX(LocalRect);
             Destroy(gameObject);
         }
     }
@@ -96,9 +96,9 @@ public class Character : Node, IMovable
 
     #region service methods
 
-    protected void Create(Vector2 _Offset, float _Health, float _Speed, float _Damage)
+    protected void Create(Rect _Rect, float _Health, float _Speed, float _Damage)
     {
-        base.Create(_Offset);
+        base.Create(_Rect);
 
         CreateHealthBar();
 
@@ -109,9 +109,9 @@ public class Character : Node, IMovable
         Appear();
     }
 
-    protected override void OnUpdate()
+    protected override void Update()
     {
-        base.OnUpdate();
+        base.Update();
 
         DoAttack();
         DoMovement();
@@ -192,26 +192,26 @@ public class Character : Node, IMovable
 
     void CreateHealthBar()
     {
-        m_HealthBar = HealthBar.Create(this, new Vector2(0, Size.y * 0.55f), "HealthBar");
+        m_HealthBar = HealthBar.Create("HealthBar", this, new Rect(0, Size.y * 0.55f, Size.x, 0.1f));
         m_HealthBar.Color = Color.red;
     }
 
     void OnTurn(bool _Left)
     {
         foreach (Image part in Parts)
-            part.FlipType = _Left ? ImageFlipType.VERTICAL : ImageFlipType.NONE;
+            part.LocalScale = _Left ? new Vector2(-1, 1) : Vector2.one;
     }
 
     Effect InitHitFX(Character _Character)
     {
-        Effect fx = Effect.Create(_Character, Vector2.zero, "hit_effect", EffectType.Hit);
+        Effect fx = Effect.Create("hit_effect", _Character, Rect.zero, EffectType.Hit);
         fx.LocalScale = Vector2.one * Mathf.Max(Size.x, Size.y);
         return fx;
     }
 
-    Effect InitDisappearFX(Vector2 _Pos)
+    Effect InitDisappearFX(Rect _Rect)
     {
-        Effect fx = Effect.Create(null, _Pos, "disappear_fx", EffectType.Disappear);
+        Effect fx = Effect.Create("disappear_fx", null, _Rect, EffectType.Disappear);
         fx.LocalScale = Vector2.one * Mathf.Max(Size.x, Size.y);
         return fx;
     }
@@ -222,11 +222,11 @@ public class Character : Node, IMovable
 
     IEnumerator AttackCoroutine(Character _Enemy)
     {
-        Vector2 enemyOffset = _Enemy.Offset;
+        Rect enemyRect = _Enemy.LocalRect;
 
         GameManager.StartCoroutine(
             ShowDamageCoroutine(
-                    _Enemy.WorldOffset,
+                    _Enemy.Offset,
                     Vector2.one * Mathf.Max(_Enemy.Size.x, _Enemy.Size.y),
                     Damage,
                     _Enemy.Group == GroupType.HOSTILE ? Color.green : Color.red
@@ -234,13 +234,13 @@ public class Character : Node, IMovable
                 );
 
         _Enemy.Health -= Damage;
-        SoundMaker.PlaySound("hit", _Enemy.WorldOffset);
+        SoundMaker.PlaySound("hit", _Enemy.Offset);
 
         if (_Enemy.Health == 0)
             GameManager.IncreseScore();
 
         // create effect depending on health
-        Effect fx = _Enemy.Health == 0 ? InitDisappearFX(enemyOffset) : InitHitFX(_Enemy);
+        Effect fx = _Enemy.Health == 0 ? InitDisappearFX(enemyRect) : InitHitFX(_Enemy);
 
         // wait for attack delay
         yield return new WaitForSeconds(AttackDelay);

@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        m_Hive   = Hive.Create(null, Vector2.zero, "hive");
-        m_Player = BeePlayer.Create(null, Vector2.zero, "BeePlayer", Vector2.zero);
+        m_Hive   = Hive.Create("hive", null, new Rect(0, 0, 1, 1));
+        m_Player = BeePlayer.Create("BeePlayer", null, new Rect(0, 0, 1, 1), Vector2.zero);
     }
 
     public void IncreseScore()
@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     {
         if (Time.time - m_SpiderSpawnedTime > SPIDER_SPAWN_INTERVAL)
         {
-            Spider.Create(null, Utility.RandomGroundOffset, "spider");
+            Spider.Create("spider", null, new Rect(Utility.RandomGroundOffset, Vector2.one));
             m_SpiderSpawnedTime = Time.time;
         }
 

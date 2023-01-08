@@ -6,10 +6,11 @@ public class Hive : Character
 {
     #region creation
 
-    new public static Hive Create(Node _Parent, Vector2 _Offset, string _ID)
+    new public static Hive Create(string _ID, Node _Parent, Rect _Rect)
     {
         Hive hive = Utility.LoadObject<Hive>("Prefabs/Hive", _ID, _Parent);
-        hive.Create(_Offset, 250, 0, 0);
+
+        hive.Create(_Rect, 250, 0, 0);
 
         return hive;
     }
@@ -41,9 +42,9 @@ public class Hive : Character
 
     #region engine methods
 
-    void Start()
+    protected override void Start()
     {
-        Flower.Create(null, VN.Utility.RandomGroundOffset, "flower");
+        Flower.Create("flower", null, new Rect( VN.Utility.RandomGroundOffset, Vector2.one));
         m_TimeFlowerSpawned = Time.time;
     }
 
@@ -51,13 +52,13 @@ public class Hive : Character
 
     #region service methods
 
-    protected override void OnUpdate()
+    protected override void Update()
     {
-        base.OnUpdate();
+        base.Update();
 
         if (Time.time - m_TimeFlowerSpawned > PeriodFlowerSpawn)
         {
-            Flower.Create(null, VN.Utility.RandomGroundOffset, "flower");
+            Flower.Create("flower", null, new Rect( VN.Utility.RandomGroundOffset, Vector2.one));
             m_TimeFlowerSpawned = Time.time;
         }
 
@@ -71,19 +72,23 @@ public class Hive : Character
                 AddHoneyPotsIcon();
                 if (m_HoneyPotsCount == 5)
                 {
-                    BeeWorker.Create(this, Offset, $"bee_worker_{m_BeesCount}", VN.Utility.RandomOffset);
+                    BeeWorker.Create($"bee_worker_{m_BeesCount}", this, LocalRect, VN.Utility.RandomOffset);
                     m_BeesCount += 1;
                     ClearHoneyPotIcons();
                 }
 
-                Flower.Create(null, VN.Utility.RandomGroundOffset, "flower");
+                Flower.Create("flower", null, new Rect( VN.Utility.RandomGroundOffset, Vector2.one));
             }
         }
     }
 
     void AddHoneyPotsIcon()
     {
-        HoneyPot potIcon = HoneyPot.Create(this, Utility.TopLeftCornerOffset + Vector2.right * POT_ICON_MARGIN * m_HoneyPotsCount, "icon");
+        HoneyPot potIcon = HoneyPot.Create(
+                "icon",
+                this,
+                new Rect(Utility.TopLeftCornerOffset + Vector2.right * POT_ICON_MARGIN * m_HoneyPotsCount, Vector2.one)
+            );
         m_HoneyPotIcons.Add(potIcon);
     }
 

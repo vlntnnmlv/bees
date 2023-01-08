@@ -5,11 +5,19 @@ class BeeWorker : Bee
 {
     #region creation
     
-    public static BeeWorker Create(Node _Parent, Vector2 _Offset, string _ID, Vector2 _FlyTo, float _Health = 20, float _Speed = 3.7f, float _Damage = 7)
+    public static BeeWorker Create(
+            string  _ID,
+            Node    _Parent,
+            Rect    _Rect,
+            Vector2 _FlyTo,
+            float   _Health = 20,
+            float   _Speed  = 3.7f,
+            float   _Damage = 7
+        )
     {
         BeeWorker bee = Utility.LoadObject<BeeWorker>("Prefabs/BeeWorker", _ID, _Parent);
 
-        bee.Create(_Parent, _Offset, _FlyTo, _Health, _Speed, _Damage);
+        bee.Create(_Parent, _Rect, _FlyTo, _Health, _Speed, _Damage);
         return bee;
     }
 
@@ -34,14 +42,14 @@ class BeeWorker : Bee
 
     #region service methods
 
-    new void Create(Node _Parent, Vector2 _Offset, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
+    new void Create(Node _Parent, Rect _Rect, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
     {
-        base.Create(_Parent, _Offset, _FlyTo, _Health, _Speed, _Damage);
+        base.Create(_Parent, _Rect, _FlyTo, _Health, _Speed, _Damage);
 
         m_CreationTime = Time.time;
     }
 
-    protected override void OnUpdate()
+    protected override void Update()
     {
         if (!GotHoney && !IsFlowering && m_DropHoneyPotCoroutine == null && Time.time - m_CreationTime > LIFE_TIME)
         {
@@ -51,7 +59,7 @@ class BeeWorker : Bee
 
         UpdateDirectionSmooth();
 
-        base.OnUpdate();
+        base.Update();
     }
 
     void UpdateDirectionSmooth()

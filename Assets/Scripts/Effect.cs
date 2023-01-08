@@ -15,11 +15,11 @@ public class Effect : Node
 
     #region creation
 
-    public static Effect Create(Node _Parent, Vector2 _Offset, string _ID, EffectType _Type)
+    public static Effect Create(string _ID, Node _Parent, Rect _Rect, EffectType _Type)
     {
         Effect effect = Utility.LoadObject<Effect>($"Prefabs/FX/{_Type.ToString()}Effect", _ID, _Parent);
 
-        effect.Create(_Offset);
+        effect.Create(_Rect);
         return effect;
     }
 

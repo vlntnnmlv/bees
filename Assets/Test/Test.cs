@@ -11,49 +11,60 @@ public class Test : MonoBehaviour
     bool      m_TestingHitEffects;
     float     m_SpiderSpawnedTime;
 
+    [SerializeField] Node m_Root;
+
+    [ExecuteAlways]
+    void Start()
+    {
+        m_Root.LocalRect = new Rect(-Utility.Size/2, Utility.Size);
+        // m_Root.RectTransform.pivot = Vector2.one / 2;
+
+        Node.Create("test", m_Root, new Rect(0, 0, 3.3f, 3.3f));
+    }
+
     void OnGUI()
     {
-        if (Button(0, 0, "Spawn Bee Worker"))
-            BeeWorker.Create(null, Utility.RandomOffset, "bee", Utility.RandomOffset);
-        if (Button(0, 1, "Spawn Bee Player") && m_Player == null)
-            m_Player = BeePlayer.Create(null, Vector2.zero, "bee", Utility.RandomOffset);
-        if (Button(0, 2, "Spawn Spider"))
-            Spider.Create(null, Utility.RandomOffset, "spider");
+        // if (Button(0, 0, "Spawn Bee Worker"))
+        //     BeeWorker.Create(null, Utility.RandomOffset, "bee", Utility.RandomOffset);
+        // if (Button(0, 1, "Spawn Bee Player") && m_Player == null)
+        //     m_Player = BeePlayer.Create(null, Vector2.zero, "bee", Utility.RandomOffset);
+        // if (Button(0, 2, "Spawn Spider"))
+        //     Spider.Create(null, Utility.RandomOffset, "spider");
 
-        if (Button(1, 0, "Decrease Bee Health") && m_Player != null)
-            m_Player.Health -= 10;
-        if (Button(1, 1, "Increase Bee Health") && m_Player != null)
-            m_Player.Health += 10;
+        // if (Button(1, 0, "Decrease Bee Health") && m_Player != null)
+        //     m_Player.Health -= 10;
+        // if (Button(1, 1, "Increase Bee Health") && m_Player != null)
+        //     m_Player.Health += 10;
 
-        if (Button(2, 0, "Clear"))
-        {
-            m_TestingHitEffects = false;
-            Character[] characters = FindObjectsOfType<Character>();
-            foreach (Character character in characters)
-            {
-                Destroy(character.gameObject);
-                Destroy(character);
-            }
-        }
+        // if (Button(2, 0, "Clear"))
+        // {
+        //     m_TestingHitEffects = false;
+        //     Character[] characters = FindObjectsOfType<Character>();
+        //     foreach (Character character in characters)
+        //     {
+        //         Destroy(character.gameObject);
+        //         Destroy(character);
+        //     }
+        // }
 
-        if (Button(3, 0, "Test hit effects"))
-        {
-            m_Player = BeePlayer.Create(null, Vector2.zero, "bee", Vector2.zero);
+        // if (Button(3, 0, "Test hit effects"))
+        // {
+        //     m_Player = BeePlayer.Create(null, Vector2.zero, "bee", Vector2.zero);
 
-            m_TestingHitEffects = true;
-        }
+        //     m_TestingHitEffects = true;
+        // }
     }
 
     void Update()
     {
-        if (m_TestingHitEffects)
-        {
-            if (Time.time - m_SpiderSpawnedTime > 2)
-            {
-                Spider.Create(null, new Vector2(0, 5), "spider");
-                m_SpiderSpawnedTime = Time.time;
-            }
-        }
+        // if (m_TestingHitEffects)
+        // {
+        //     if (Time.time - m_SpiderSpawnedTime > 2)
+        //     {
+        //         Spider.Create(null, new Vector2(0, 5), "spider");
+        //         m_SpiderSpawnedTime = Time.time;
+        //     }
+        // }
     }
 
     bool Button(int _Col, int _Row, string _Text)

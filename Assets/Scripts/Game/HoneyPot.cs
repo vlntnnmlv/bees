@@ -4,17 +4,17 @@ using VN;
 
 class HoneyPot : Image
 {
-    public static HoneyPot Create(Node _Parent, Vector2 _Offset, string _ID, bool _Instant = false)
+    public static HoneyPot Create( string _ID, Node _Parent, Rect _Rect, bool _Instant = false)
     {
-        HoneyPot honeyPot = Utility.LoadObject<HoneyPot>("Prefabs/HoneyPot", _ID,_Parent);
-        honeyPot.Create(_Offset, _Instant);
+        HoneyPot honeyPot = Utility.CreateObject<HoneyPot>(_ID,_Parent);
+        honeyPot.Create(_Rect, _Instant);
 
         return honeyPot;
     }
 
-    void Create(Vector2 _Offset, bool _Instant)
+    void Create(Rect _Rect, bool _Instant)
     {
-        base.Create(_Offset);
+        base.Create(_Rect, "honey_pot");
 
         if (!_Instant)
             StartCoroutine(Appear());

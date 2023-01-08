@@ -10,11 +10,11 @@ public class HealthBar : Node
         set => m_Bar.Color = value;
     }
 
-    new public static HealthBar Create(Node _Parent, Vector2 _Offset, string _ID)
+    new public static HealthBar Create(string _ID, Node _Parent, Rect _Rect)
     {
         HealthBar bar = Utility.LoadObject<HealthBar>("Prefabs/HealthBar", _ID, _Parent);
 
-        bar.Create(_Offset);
+        bar.Create(_Rect);
         return bar;
     }
 
@@ -23,7 +23,7 @@ public class HealthBar : Node
         _P = _P / BASE_HEALTH;
         Image[] parts = GetComponentsInChildren<Image>();
         foreach (Image part in parts)
-            part.Size = new Vector2(part.Size.x * _P, part.Size.y);
+            part.LocalRect = new Rect(part.LocalRect.min, new Vector2(part.LocalRect.width * _P, part.LocalRect.height));
     }
 
     public void UpdateBar(int _P)

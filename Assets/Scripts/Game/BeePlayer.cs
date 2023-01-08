@@ -7,9 +7,9 @@ public class BeePlayer : Bee
     #region creation
     
     public static BeePlayer Create(
-        Node    _Parent,
-        Vector2 _Offset,
         string  _ID,
+        Node    _Parent,
+        Rect    _Rect,
         Vector2 _FlyTo,
         float   _Health = 100,
         float   _Speed  = 5,
@@ -17,7 +17,7 @@ public class BeePlayer : Bee
     {
         BeePlayer beePlayer = Utility.LoadObject<BeePlayer>("Prefabs/BeePlayer", _ID, _Parent);
 
-        beePlayer.Create(_Parent, _Offset, _FlyTo, _Health, _Speed, _Damage);
+        beePlayer.Create(_Parent, _Rect, _FlyTo, _Health, _Speed, _Damage);
         return beePlayer;
     }
 
@@ -48,11 +48,11 @@ public class BeePlayer : Bee
 
     #region service methods
 
-    new void Create(Node _Parent, Vector2 _Offset, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
+    new void Create(Node _Parent, Rect _Rect, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
     {
         Controller.Init(this);
 
-        base.Create(_Parent, _Offset, _FlyTo, _Health, _Speed, _Damage);
+        base.Create(_Parent, _Rect, _FlyTo, _Health, _Speed, _Damage);
     }
 
     #endregion

@@ -26,7 +26,7 @@ public abstract class Bee : Character
             m_IsFlowering = value;
             m_Animator.SetBool("IsFlowering", m_IsFlowering);
             if (m_IsFlowering)
-                SoundMaker.PlaySound("flowering", WorldOffset);
+                SoundMaker.PlaySound("flowering", Offset);
         }
     }
 
@@ -37,8 +37,10 @@ public abstract class Bee : Character
     
     #region engine methods
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         m_Animator = GetComponent<Animator>();
     }
 
@@ -60,16 +62,16 @@ public abstract class Bee : Character
 
     #region service methods
 
-    protected void Create(Node _Parent, Vector2 _HiveOffset, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
+    protected void Create(Node _Parent, Rect _Hive, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
     {
-        base.Create(_HiveOffset, _Health, _Speed, _Damage);
+        base.Create(_Hive, _Health, _Speed, _Damage);
 
         m_FlyTo = _FlyTo;
     }
 
-    protected override void OnUpdate()
+    protected override void Update()
     {
-        base.OnUpdate();
+        base.Update();
 
         Flower[] flowers = FindObjectsOfType<Flower>();
         foreach (Flower flower in flowers)
@@ -138,7 +140,7 @@ public abstract class Bee : Character
     IEnumerator DropHoneyPotCoroutine(Vector2 _Dest)
     {
         m_Pot.gameObject.SetActive(false);
-        HoneyPot tmpPot = HoneyPot.Create(null, transform.TransformPoint(m_Pot.Offset), "tmpPot", true);
+        HoneyPot tmpPot = HoneyPot.Create("tmpPot", null, m_Pot.WorldRect, true);
         tmpPot.transform.rotation = m_Pot.transform.rotation;
         Vector2  start  = tmpPot.Offset;
 

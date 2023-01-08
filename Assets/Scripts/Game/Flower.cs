@@ -11,7 +11,6 @@ public class Flower : Image
         set
         {
             m_Used = value;
-            m_Animator.SetTrigger("Used");
         }
     }
 
@@ -22,31 +21,31 @@ public class Flower : Image
     bool     m_Used;
     float    m_CreationTime;
 
-    new public static Flower Create(Node _Parent, Vector2 _Offset, string _ID)
+    new public static Flower Create(string _ID, Node _Parent, Rect _Rect)
     {
-        Flower flower = Utility.LoadObject<Flower>("Prefabs/Flower", _ID, _Parent);
+        Flower flower = Utility.CreateObject<Flower>(_ID, _Parent);
 
-        flower.Create(_Offset);
+        flower.Create(_Rect, "flower");
 
         return flower;
     }
 
-    void Awake()
+    protected override void Awake()
     {
         m_Animator = GetComponent<Animator>();
     }
 
-    new void Create(Vector2 _Offset)
+    protected override void Create(Rect _Rect, string _SpriteName)
     {
-        base.Create(_Offset);
+        base.Create(_Rect, _SpriteName);
 
-        GetComponent<SpriteAnimated>().OnAnimationPlayed += () => m_Appeared = true;
+        // GetComponent<SpriteAnimated>().OnAnimationPlayed += () => m_Appeared = true;
         m_CreationTime = Time.time;
     }
 
-    protected override void OnUpdate()
+    protected override void Update()
     {
-        base.OnUpdate();
+        base.Update();
 
         if (Time.time - m_CreationTime > LIFE_TIME)
         {
