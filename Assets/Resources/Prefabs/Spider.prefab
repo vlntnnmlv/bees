@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5861891048465787874}
-  - component: {fileID: 3538280018038381976}
+  - component: {fileID: 8365729662113927564}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3538280018038381976
+--- !u!114 &8365729662113927564
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -149,9 +149,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3511856094902567834}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74b34f5f1e6414044a8b998b4f361fd5, type: 3}
+  m_Script: {fileID: 11500000, guid: 10ef0fb28c84a46c284612231591683e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 11400000, guid: 80230daec06df44bb8f781024495e4f5, type: 2}
   m_SpriteID: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_AnimationType: 1
+  m_FrameTime: 0.1

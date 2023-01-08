@@ -27,7 +27,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 306948029347424550}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 306948029347424550}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74b34f5f1e6414044a8b998b4f361fd5, type: 3}
+  m_Script: {fileID: 11500000, guid: 3088e6511f9d44fb987de57b1f9bd948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 11400000, guid: 1488fb582b564448b99db64cf78305d2, type: 2}
@@ -114,7 +114,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3509455905865415434}
-  - component: {fileID: 7840640675908165820}
+  - component: {fileID: -1131765283193317171}
   - component: {fileID: -6850571663886007341}
   - component: {fileID: 7754554607679662092}
   m_Layer: 0
@@ -145,7 +145,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7840640675908165820
+--- !u!114 &-1131765283193317171
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,9 +154,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 306948030092844363}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4481a94a9258244d6a4ed49aee026238, type: 3}
+  m_Script: {fileID: 11500000, guid: a5b458d3995fc43159cac1ec06e51796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_IsHealthBarActive: 1
+  m_Pot: {fileID: 5771172619436292699}
 --- !u!95 &-6850571663886007341
 Animator:
   serializedVersion: 4
@@ -241,7 +243,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 306948030162439765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4481a94a9258244d6a4ed49aee026238, type: 3}
+  m_Script: {fileID: 11500000, guid: bac0debc9b86b4c919af8e0ae5a3f0fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6335770285926722814
@@ -271,7 +273,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6335770285926722814}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -342,12 +344,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6335770285926722814}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74b34f5f1e6414044a8b998b4f361fd5, type: 3}
+  m_Script: {fileID: 11500000, guid: 10ef0fb28c84a46c284612231591683e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 11400000, guid: 1447838ce65344b40973e2c68cc5562a, type: 2}
-  m_SpriteID: 0
+  m_SpriteID: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_AnimationType: 1
 --- !u!1001 &4281550296637533131
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -449,7 +452,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7730110930055815216, guid: fda08535d83d240bb90b1d5338fd7f97, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8359016721346145949, guid: fda08535d83d240bb90b1d5338fd7f97, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -462,3 +465,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3486399586687139535, guid: fda08535d83d240bb90b1d5338fd7f97, type: 3}
   m_PrefabInstance: {fileID: 4281550296637533131}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5771172619436292699 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7745150830134268304, guid: fda08535d83d240bb90b1d5338fd7f97, type: 3}
+  m_PrefabInstance: {fileID: 4281550296637533131}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f462e317d14f4200a8eabca4a7b3a00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

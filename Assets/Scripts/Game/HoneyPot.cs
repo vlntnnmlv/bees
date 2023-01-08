@@ -16,6 +16,8 @@ class HoneyPot : Image
     {
         base.Create(_Rect, "honey_pot");
 
+        Pivot = Vector2.one / 2;
+
         if (!_Instant)
             StartCoroutine(Appear());
     }
@@ -24,7 +26,7 @@ class HoneyPot : Image
     {
         yield return Coroutines.Update(
             () => LocalScale = Vector2.zero,
-            _Phase => LocalScale = Vector2.Lerp(Vector2.zero, Vector2.one * 2.3f, _Phase),
+            _Phase => LocalScale = Vector2.Lerp(Vector2.zero, Vector2.one, _Phase),
             null,
             0.5f
         );

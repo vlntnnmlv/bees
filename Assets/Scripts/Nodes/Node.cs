@@ -5,6 +5,24 @@ using System.Linq;
 namespace VN
 {
 
+public struct Anchors
+{
+    public Vector2 Min { get; set; }
+    public Vector2 Max { get; set; }
+
+    public Anchors(Vector2 _Min, Vector2 _Max)
+    {
+        Min = _Min;
+        Max = _Max;
+    }
+
+    public Anchors(float _MinX, float _MaxX, float _MinY, float _MaxY)
+    {
+        Min = new Vector2(_MinX, _MinY);
+        Max = new Vector2(_MaxX, _MaxY);
+    }
+}
+
 [RequireComponent(typeof(RectTransform))]
 public class Node : UIBehaviour
 {
@@ -49,10 +67,10 @@ public class Node : UIBehaviour
 
     public float Layer
     {
-        get => -transform.localPosition.z;
-        set => transform.localPosition = new Vector3(
-                transform.localPosition.x,
-                transform.localPosition.y,
+        get => -RectTransform.localPosition.z;
+        set => RectTransform.localPosition = new Vector3(
+                RectTransform.localPosition.x,
+                RectTransform.localPosition.y,
                 -value
             );
     }
@@ -75,10 +93,44 @@ public class Node : UIBehaviour
         set => RectTransform.anchoredPosition = value;
     }
 
+    public Vector2 Size
+    {
+        get => LocalRect.size;
+        set => LocalRect = new Rect(LocalRect.min, value);
+    }
+
+    public float Width
+    {
+        get => Size.x;
+        set => Size = new Vector2(value, Size.y);
+    }
+
+    public float Height
+    {
+        get => Size.y;
+        set => Size = new Vector2(Size.x, value);
+    }
+
+    public Vector2 Pivot
+    {
+        get => RectTransform.pivot;
+        set => RectTransform.pivot = value;
+    }
+
+    public Anchors Anchors
+    {
+        get => new Anchors(RectTransform.anchorMin, RectTransform.anchorMax);
+        set
+        {
+            RectTransform.anchorMin = value.Min;
+            RectTransform.anchorMax = value.Max;
+        }
+    }
+
     public Vector2 LocalScale
     {
         get => RectTransform.localScale;
-        set => RectTransform.localScale = value;
+        set => RectTransform.localScale = new Vector3(value.x, value.y, RectTransform.localScale.z);
     }
 
     public Rect Rect
@@ -126,7 +178,7 @@ public class Node : UIBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(WorldRect.center, WorldRect.size);
+        Gizmos.DrawWireCube(new Vector3(WorldRect.center.x, WorldRect.center.y, RectTransform.position.z), WorldRect.size);
     }
 
     protected virtual void Update()

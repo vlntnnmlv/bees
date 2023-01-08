@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5779223646821396084}
+  - component: {fileID: 5780130983210249041}
   - component: {fileID: 6584036947508816144}
   - component: {fileID: 6584036947508816145}
-  - component: {fileID: 5780130983210249041}
   m_Layer: 0
   m_Name: HitEffect
   m_TagString: Untagged
@@ -39,6 +39,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5780130983210249041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6584036947508816146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3625c487d79b4dffb688dc4b1718862, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParticleSystem: {fileID: 6584036947508816144}
+  m_Sprite: {fileID: 11400000, guid: 929fae882023b47578fec866757d468a, type: 2}
 --- !u!198 &6584036947508816144
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -4876,16 +4890,3 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &5780130983210249041
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6584036947508816146}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3625c487d79b4dffb688dc4b1718862, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ParticleSystem: {fileID: 6584036947508816144}

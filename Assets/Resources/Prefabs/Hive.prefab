@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5099676298060773142}
-  - component: {fileID: 284831602231442797}
+  - component: {fileID: 5775224183449536009}
   m_Layer: 0
   m_Name: Hive
   m_TagString: Untagged
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &284831602231442797
+--- !u!114 &5775224183449536009
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,10 +85,10 @@ RectTransform:
   m_Father: {fileID: 5099676298060773142}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1, y: 1}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &2403363826635275595
 MeshRenderer:
@@ -149,7 +149,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8634746938117393564}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74b34f5f1e6414044a8b998b4f361fd5, type: 3}
+  m_Script: {fileID: 11500000, guid: 3088e6511f9d44fb987de57b1f9bd948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 11400000, guid: 322a8409633c24e3b9a4ecc5d08c07c6, type: 2}

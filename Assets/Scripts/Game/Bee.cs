@@ -25,6 +25,7 @@ public abstract class Bee : Character
             Paused = value;
             m_IsFlowering = value;
             m_Animator.SetBool("IsFlowering", m_IsFlowering);
+
             if (m_IsFlowering)
                 SoundMaker.PlaySound("flowering", Offset);
         }
@@ -62,9 +63,9 @@ public abstract class Bee : Character
 
     #region service methods
 
-    protected void Create(Node _Parent, Rect _Hive, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
+    protected void Create(Node _Parent, Rect _Rect, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
     {
-        base.Create(_Hive, _Health, _Speed, _Damage);
+        base.Create(_Rect, _Health, _Speed, _Damage);
 
         m_FlyTo = _FlyTo;
     }
@@ -96,7 +97,7 @@ public abstract class Bee : Character
 
     #region coroutines
 
-    protected override IEnumerator DefaultAppearCoroutine()
+    protected override IEnumerator AppearCoroutineInternal()
     {
         yield return StartCoroutine(FlyToPoint());
     }
@@ -117,7 +118,7 @@ public abstract class Bee : Character
         IsFlowering = true;
         yield return new WaitForSeconds(1);
         IsFlowering = false;
-        _Flower.Disappear();
+        _Flower.Health = 0;
         SetHoneyPot();
     }
 
@@ -141,10 +142,9 @@ public abstract class Bee : Character
     {
         m_Pot.gameObject.SetActive(false);
         HoneyPot tmpPot = HoneyPot.Create("tmpPot", null, m_Pot.WorldRect, true);
-        tmpPot.transform.rotation = m_Pot.transform.rotation;
+        tmpPot.RectTransform.rotation = m_Pot.RectTransform.rotation;
+        tmpPot.Pivot = m_Pot.Pivot;
         Vector2  start  = tmpPot.Offset;
-
-        FindObjectOfType<GameManager>().IncreseScore();
 
         yield return StartCoroutine(Coroutines.Update(
                 () => GotHoney = false,

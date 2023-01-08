@@ -44,7 +44,8 @@ public class Hive : Character
 
     protected override void Start()
     {
-        Flower.Create("flower", null, new Rect( VN.Utility.RandomGroundOffset, Vector2.one));
+        Flower.Create("flower", null, new Rect(VN.Utility.RandomGroundOffset, Vector2.one));
+
         m_TimeFlowerSpawned = Time.time;
     }
 
@@ -67,7 +68,7 @@ public class Hive : Character
         {
             if (Vector2.Distance(bee.Offset, Offset) < 1 && bee.GotHoney)
             {
-                bee.DropHoneyPot(Offset);
+                bee.DropHoneyPot(WorldRect.center);
                 m_HoneyPotsCount += 1;
                 AddHoneyPotsIcon();
                 if (m_HoneyPotsCount == 5)

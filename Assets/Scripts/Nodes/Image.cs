@@ -13,8 +13,7 @@ public class Image : Node
     {
         Image image = Utility.CreateObject<Image>(_ID, _Parent);
 
-        image.Create(_Rect);
-
+        image.Create(_Rect, _SpriteName);
         return image;
     }
 
@@ -24,8 +23,13 @@ public class Image : Node
 
     public Color Color
     {
-        get => MeshRenderer.material.color;
-        set => MeshRenderer.material.color = value;
+        get => MeshRenderer.sharedMaterial.color;
+        set
+        {
+            m_Color = value;
+            if (MeshRenderer.sharedMaterial != null)
+                MeshRenderer.sharedMaterial.color = m_Color;
+        }
     }
 
     public MeshRenderer MeshRenderer
@@ -52,9 +56,9 @@ public class Image : Node
 
     #region attibutes
 
-    [SerializeField] VN.Sprite m_Sprite;
-    [SerializeField] int       m_SpriteID;
-    [SerializeField] Color     m_Color = Color.white;
+    [SerializeField] protected VN.Sprite     m_Sprite;
+    [SerializeField] protected int           m_SpriteID;
+    [SerializeField] Color         m_Color = Color.white;
 
     MeshRenderer m_MeshRenderer;
     MeshFilter   m_MeshFilter;
@@ -63,58 +67,37 @@ public class Image : Node
 
     #region engine methods
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
 
-        MeshRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        // set material
+        MeshRenderer.sharedMaterial = new Material(Shader.Find("Sprites/Default"));
+        MeshRenderer.sharedMaterial.mainTexture = m_Sprite.Texture;
 
-        if (m_Sprite != null)
-        {
-            MeshRenderer.material.mainTexture = m_Sprite.Texture;
-            m_Sprite.ID = m_SpriteID;
-        }
-
-        CreateMesh();
+        // set mesh
+        MeshFilter.sharedMesh = CalculateMesh();
+        MeshFilter.sharedMesh.uv = m_Sprite.CalculateUV(m_SpriteID);
     }
 
     protected override void Update()
     {
-        if (m_Sprite != null)
-        {
-            MeshRenderer.material.mainTexture = m_Sprite.Texture;
-            MeshFilter.mesh.uv                = m_Sprite.GetUV();
-        }
-    }
+        base.Update();
 
-    protected override void OnValidate()
-    {
-        base.OnValidate();
-
-        if (m_Sprite == null)
-            return;
-
-        m_Sprite.ID = m_SpriteID;
-
-        MeshRenderer.material.mainTexture = m_Sprite.Texture;
-        MeshRenderer.material.color       = m_Color;
-        CreateMesh();
+        Color = m_Color;
+        if (MeshRenderer.sharedMaterial != null && m_Sprite != null)
+            MeshRenderer.sharedMaterial.mainTexture = m_Sprite.Texture;
+        
+        if (MeshFilter.sharedMesh != null && MeshFilter.sharedMesh.vertices != null && MeshFilter.sharedMesh.vertices.Length == 4)
+            MeshFilter.sharedMesh.uv = m_Sprite.CalculateUV(m_SpriteID);
     }
 
     protected override void OnRectTransformDimensionsChange()
     {
         base.OnRectTransformDimensionsChange();
 
-        Vector2 pos  = LocalRect.min;
-        Vector2 size = LocalRect.size;
-
-        MeshFilter.mesh.vertices = new Vector3[]
-        {
-            new Vector3(pos.x, pos.y, 0),
-            new Vector3(pos.x + size.x, pos.y, 0),
-            new Vector3(pos.x + size.x, pos.y + size.y, 0),
-            new Vector3(pos.x, pos.y + size.y, 0),
-        };
+        if (MeshFilter.sharedMesh != null && MeshFilter.sharedMesh.vertices != null && MeshFilter.sharedMesh.vertices.Length == 4)
+            MeshFilter.sharedMesh.vertices = CalculateVertices();
     }
 
     #endregion
@@ -128,34 +111,39 @@ public class Image : Node
         m_Sprite = Resources.Load<VN.Sprite>("Sprites/" + _SpriteName);
     }
 
-    void CreateMesh()
+    Mesh CalculateMesh()
     {
-        if (MeshFilter.mesh == null)
-        {
-            MeshFilter.mesh = new Mesh();
-            MeshFilter.mesh.name = "rect_mesh";
-        }
+        Mesh mesh = new Mesh();
+        mesh.name = "RectMesh";
 
-        Vector2 pos  = LocalRect.min;
-        Vector2 size = LocalRect.size;
-
-        MeshFilter.mesh.vertices = new Vector3[]
-        {
-            new Vector3(pos.x, pos.y, 0),
-            new Vector3(pos.x + size.x, pos.y, 0),
-            new Vector3(pos.x + size.x, pos.y + size.y, 0),
-            new Vector3(pos.x, pos.y + size.y, 0),
-        };
-
-        MeshFilter.mesh.triangles = new int[]
+        int[] triangles = new int[6]
         {
             0, 1, 2,
-            0, 2, 3,
+            0, 2, 3
         };
 
-        if (m_Sprite != null)
-            MeshFilter.mesh.uv = m_Sprite.GetUV();
+        mesh.vertices = CalculateVertices();
+        mesh.triangles = triangles;
+
+        return mesh;
     }
+
+    Vector3[] CalculateVertices()
+    {
+        Vector2 pos = LocalRect.min;
+        Vector2 size = LocalRect.size;
+
+        Vector3[] vertices = new Vector3[4]
+        {
+            new Vector3(pos.x,          pos.y         ),
+            new Vector3(pos.x + size.x, pos.y         ),
+            new Vector3(pos.x + size.x, pos.y + size.y),
+            new Vector3(pos.x,          pos.y + size.y)
+        };
+
+        return vertices;
+    }
+
 
     #endregion
 

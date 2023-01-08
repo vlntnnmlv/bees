@@ -18,12 +18,12 @@ public class HealthBar : Node
         return bar;
     }
 
-    public void UpdateBar(float _P)
+    public void UpdateBar(float _Health)
     {
-        _P = _P / BASE_HEALTH;
+        _Health = _Health / BASE_HEALTH;
         Image[] parts = GetComponentsInChildren<Image>();
         foreach (Image part in parts)
-            part.LocalRect = new Rect(part.LocalRect.min, new Vector2(part.LocalRect.width * _P, part.LocalRect.height));
+            part.LocalScale = new Vector2(_Health, part.LocalScale.y);
     }
 
     public void UpdateBar(int _P)

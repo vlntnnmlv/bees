@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     float SPIDER_SPAWN_INTERVAL = 3.5f;
     [SerializeField] TextMeshProUGUI m_Text;
+    [SerializeField] Image           m_Background;
 
     float     m_SpiderSpawnedTime = 0;
     Hive      m_Hive;
@@ -14,13 +15,10 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        m_Background.LocalRect = new Rect(-Utility.Size/2, Utility.Size);
+
         m_Hive   = Hive.Create("hive", null, new Rect(0, 0, 1, 1));
         m_Player = BeePlayer.Create("BeePlayer", null, new Rect(0, 0, 1, 1), Vector2.zero);
-    }
-
-    public void IncreseScore()
-    {
-        m_Text.text = (int.Parse(m_Text.text) + 1).ToString();
     }
 
     void Update()

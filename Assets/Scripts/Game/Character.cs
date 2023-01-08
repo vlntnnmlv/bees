@@ -20,9 +20,9 @@ public class Character : Node, IMovable
     #region attributes
 
     [SerializeField] bool    m_IsHealthBarActive;
+    protected bool           m_Appeared;
     HealthBar                m_HealthBar;
     float                    m_Health;
-    bool                     m_Appeared;
     bool                     m_Paused;
     Coroutine                m_AttackCoroutine;
 
@@ -64,19 +64,6 @@ public class Character : Node, IMovable
 
     protected bool IsDamaged { get; set; }
 
-    protected Image[] Parts => GetComponentsInChildren<Image>();
-
-    protected Vector2 Size
-    {
-        get
-        {
-            return new Vector2(
-                Parts.Max(part => part.LocalRect.width),
-                Parts.Max(part => part.LocalRect.height)
-            );
-        }
-    }
-
     GameManager GameManager => FindObjectOfType<GameManager>();
 
     #endregion
@@ -87,7 +74,7 @@ public class Character : Node, IMovable
     {
         if (Dead)
         {
-            InitDisappearFX(LocalRect);
+            Effect.Create("disappear_fx", null, WorldRect, EffectType.Disappear);
             Destroy(gameObject);
         }
     }
@@ -99,6 +86,8 @@ public class Character : Node, IMovable
     protected void Create(Rect _Rect, float _Health, float _Speed, float _Damage)
     {
         base.Create(_Rect);
+
+        Pivot = Vector2.one / 2;
 
         CreateHealthBar();
 
@@ -192,28 +181,17 @@ public class Character : Node, IMovable
 
     void CreateHealthBar()
     {
-        m_HealthBar = HealthBar.Create("HealthBar", this, new Rect(0, Size.y * 0.55f, Size.x, 0.1f));
-        m_HealthBar.Color = Color.red;
+        m_HealthBar = HealthBar.Create("HealthBar", this, Rect.zero);
+
+        m_HealthBar.Pivot = Vector2.one / 2;
+        m_HealthBar.Anchors = new Anchors(0, 1, 1.1f, 1.2f);
+
+        m_HealthBar.Color = Group == GroupType.HOSTILE ? Color.red : Color.green;
     }
 
     void OnTurn(bool _Left)
     {
-        foreach (Image part in Parts)
-            part.LocalScale = _Left ? new Vector2(-1, 1) : Vector2.one;
-    }
-
-    Effect InitHitFX(Character _Character)
-    {
-        Effect fx = Effect.Create("hit_effect", _Character, Rect.zero, EffectType.Hit);
-        fx.LocalScale = Vector2.one * Mathf.Max(Size.x, Size.y);
-        return fx;
-    }
-
-    Effect InitDisappearFX(Rect _Rect)
-    {
-        Effect fx = Effect.Create("disappear_fx", null, _Rect, EffectType.Disappear);
-        fx.LocalScale = Vector2.one * Mathf.Max(Size.x, Size.y);
-        return fx;
+        LocalScale = _Left ? new Vector2(-1, 1) : Vector2.one;
     }
 
     #endregion
@@ -222,12 +200,13 @@ public class Character : Node, IMovable
 
     IEnumerator AttackCoroutine(Character _Enemy)
     {
-        Rect enemyRect = _Enemy.LocalRect;
+        Rect enemyRect = _Enemy.WorldRect;
 
+        // TODO: Refactor this with Text node  (TextMesh)
         GameManager.StartCoroutine(
             ShowDamageCoroutine(
                     _Enemy.Offset,
-                    Vector2.one * Mathf.Max(_Enemy.Size.x, _Enemy.Size.y),
+                    Vector2.one * Mathf.Max(enemyRect.width, enemyRect.height),
                     Damage,
                     _Enemy.Group == GroupType.HOSTILE ? Color.green : Color.red
                     )
@@ -236,11 +215,11 @@ public class Character : Node, IMovable
         _Enemy.Health -= Damage;
         SoundMaker.PlaySound("hit", _Enemy.Offset);
 
-        if (_Enemy.Health == 0)
-            GameManager.IncreseScore();
-
-        // create effect depending on health
-        Effect fx = _Enemy.Health == 0 ? InitDisappearFX(enemyRect) : InitHitFX(_Enemy);
+        // create hit effect if enemy attack was not lethal
+        if (_Enemy.Health != 0)
+        {
+            Effect.Create("hit_effect", _Enemy, _Enemy.LocalRect, EffectType.Hit);
+        }
 
         // wait for attack delay
         yield return new WaitForSeconds(AttackDelay);
@@ -269,13 +248,13 @@ public class Character : Node, IMovable
         );
     }
 
-    protected IEnumerator AppearCoroutine()
+    IEnumerator AppearCoroutine()
     {
-        yield return DefaultAppearCoroutine();
+        yield return AppearCoroutineInternal();
         m_Appeared = true;
     }
 
-    protected virtual IEnumerator DefaultAppearCoroutine()
+    protected virtual IEnumerator AppearCoroutineInternal()
     {
         yield return Coroutines.Update(
             null,

@@ -1,47 +1,42 @@
 using UnityEngine;
+using System.Collections;
 using VN;
 
-public class Flower : Image
+public class Flower : Character
 {
-    const float LIFE_TIME = 15;
-
-    public bool Used
-    {
-        get => m_Used;
-        set
-        {
-            m_Used = value;
-        }
-    }
-
-    public bool CanBeUsed => m_Appeared && !Used;
-
-    [SerializeField] bool m_Appeared = false;
-    Animator m_Animator;
-    bool     m_Used;
-    float    m_CreationTime;
+    #region creation
 
     new public static Flower Create(string _ID, Node _Parent, Rect _Rect)
     {
-        Flower flower = Utility.CreateObject<Flower>(_ID, _Parent);
+        Flower flower = Utility.LoadObject<Flower>("Prefabs/Flower", _ID, _Parent);
 
-        flower.Create(_Rect, "flower");
-
+        flower.Create(_Rect, 100, 0, 0);
         return flower;
     }
 
-    protected override void Awake()
-    {
-        m_Animator = GetComponent<Animator>();
-    }
+    #endregion
 
-    protected override void Create(Rect _Rect, string _SpriteName)
-    {
-        base.Create(_Rect, _SpriteName);
+    #region constants
 
-        // GetComponent<SpriteAnimated>().OnAnimationPlayed += () => m_Appeared = true;
-        m_CreationTime = Time.time;
-    }
+    const float LIFE_TIME = 15;
+
+    #endregion
+
+    #region proprties
+
+    public bool     Used { get; set; }
+    public bool     CanBeUsed => m_Appeared && !Used;
+    public override GroupType Group => GroupType.PEACEFULL;
+
+    #endregion
+
+    #region attributes
+
+    float    m_CreationTime;
+
+    #endregion
+
+    #region engine methods
 
     protected override void Update()
     {
@@ -50,22 +45,24 @@ public class Flower : Image
         if (Time.time - m_CreationTime > LIFE_TIME)
         {
             Used = true;
-            Disappear();
+            Health = 0;
         }
     }
 
-    public void Disappear()
+    #endregion
+
+    #region service methods
+
+    new void Create(Rect _Rect, float _Health, float _Speed, float _Damage)
     {
-        m_Animator.SetTrigger("Disappear");
+        base.Create(_Rect, _Health, _Speed, _Damage);
+
+        m_CreationTime = Time.time;
     }
 
-    public void OnAppear()
-    {
-        m_Appeared = true;
-    }
+    #endregion
 
-    public void OnDisappear()
-    {
-        Destroy(gameObject, 0.0f);
-    }
+    #region coroutines
+
+    #endregion
 }
