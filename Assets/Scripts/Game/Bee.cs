@@ -10,6 +10,8 @@ public abstract class Bee : Character
 
     protected Animator  m_Animator;
     protected Coroutine m_DropHoneyPotCoroutine = null;
+    protected Coroutine m_SetHoneyPotCoroutine  = null;
+
     bool                m_IsFlowering;
     Vector2             m_FlyTo;
 
@@ -78,7 +80,7 @@ public abstract class Bee : Character
 
     void SetHoneyPot()
     {
-        StartCoroutine(SetHoneyPotCoroutine());
+        m_SetHoneyPotCoroutine = StartCoroutine(SetHoneyPotCoroutine());
     }
 
     #endregion
@@ -104,7 +106,7 @@ public abstract class Bee : Character
                     m_Pot.gameObject.SetActive(true);
                 },
                 _Phase => m_Pot.LocalScale = _Phase * Vector2.one,
-                null,
+                () => m_SetHoneyPotCoroutine = null,
                 0.35f
             )
         );
@@ -112,18 +114,19 @@ public abstract class Bee : Character
 
     IEnumerator DropHoneyPotCoroutine(Vector2 _Dest)
     {
+        GotHoney = false;
+        yield return new WaitWhile(() => m_SetHoneyPotCoroutine != null);
+
         m_Pot.gameObject.SetActive(false);
         HoneyPot tmpPot = HoneyPot.Create("tmpPot", null, m_Pot.WorldRect, true);
-        tmpPot.RectTransform.rotation = m_Pot.RectTransform.rotation;
-        tmpPot.Pivot = m_Pot.Pivot;
-        Vector2  start  = tmpPot.Offset;
-        Paused = true;
-        GotHoney = false;
-        m_DropHoneyPotCoroutine = null;
+        tmpPot.Rotation = m_Pot.Rotation;
+        tmpPot.WorldOffset = m_Pot.WorldOffset;
+
+        Vector2  start  = tmpPot.WorldOffset;
 
         yield return StartCoroutine(Coroutines.Update(
-                () => GotHoney = false,
-                _Phase => tmpPot.Offset = Vector2.Lerp(start, _Dest, _Phase),
+                null,
+                _Phase => tmpPot.WorldOffset = Vector2.Lerp(start, _Dest, _Phase),
                 null,
                 0.5f
             )

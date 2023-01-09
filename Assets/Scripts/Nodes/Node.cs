@@ -87,10 +87,22 @@ public class Node : UIBehaviour
         }
     }
 
+    public Quaternion Rotation
+    {
+        get => RectTransform.localRotation;
+        set => RectTransform.localRotation = value;
+    }
+
     public Vector2 Offset
     {
         get => RectTransform.anchoredPosition;
         set => RectTransform.anchoredPosition = value;
+    }
+
+    public Vector2 WorldOffset
+    {
+        get => RectTransform.position;
+        set => RectTransform.position = new Vector3(value.x, value.y, RectTransform.position.z);
     }
 
     public Vector2 Size

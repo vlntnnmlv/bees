@@ -5,7 +5,7 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    float SPIDER_SPAWN_INTERVAL = 100000; //5f;
+    float SPIDER_SPAWN_INTERVAL = 5f;
     [SerializeField] TextMeshProUGUI m_Text;
     [SerializeField] Node            m_Root;
 
