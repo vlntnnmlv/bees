@@ -142,7 +142,7 @@ public class Character : Node, IMovable
     {
         GroupType group = _Character.Group;
 
-        if (Vector2.Distance(Offset, _Character.Offset) > AttackDistance || m_AttackCoroutine != null)
+        if (Vector2.Distance(WorldOffset, _Character.WorldOffset) > AttackDistance || m_AttackCoroutine != null)
             return false;
 
         switch (Group)
