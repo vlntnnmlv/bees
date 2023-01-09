@@ -189,19 +189,19 @@ public class Node : UIBehaviour
 
     #region service methods
 
-    protected void Create(Rect _Rect)
+    protected virtual void Create(Rect _Rect)
     {
         RectTransform.anchoredPosition = _Rect.min;
-        RectTransform.pivot            = Vector2.zero;
+        Pivot                          = Vector2.zero;
         RectTransform.sizeDelta        = _Rect.size;
     }
 
     public void SetParent(Node _Parent, bool _WorldPositionStays = false)
     {
         if (_Parent == null || _Parent.gameObject == null || _Parent.transform == null)
-            transform.SetParent(null, true);
-        else
-            transform.SetParent(_Parent.transform, _WorldPositionStays);
+            _Parent = GameManager.Instance.Root;
+
+        transform.SetParent(_Parent.transform, _WorldPositionStays);
 
         SetLayers();
     }

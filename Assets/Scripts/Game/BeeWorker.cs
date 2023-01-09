@@ -3,26 +3,6 @@ using VN;
 
 class BeeWorker : Bee
 {
-    #region creation
-    
-    public static BeeWorker Create(
-            string  _ID,
-            Node    _Parent,
-            Rect    _Rect,
-            Vector2 _FlyTo,
-            float   _Health = 20,
-            float   _Speed  = 3.7f,
-            float   _Damage = 7
-        )
-    {
-        BeeWorker bee = Utility.LoadObject<BeeWorker>("Prefabs/BeeWorker", _ID, _Parent);
-
-        bee.Create(_Parent, _Rect, _FlyTo, _Health, _Speed, _Damage);
-        return bee;
-    }
-
-    #endregion
-
     #region constants
 
     const float DIRECTION_LERP_TIME = 0.3f;
@@ -42,9 +22,9 @@ class BeeWorker : Bee
 
     #region service methods
 
-    new void Create(Node _Parent, Rect _Rect, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
+    protected override void Create(Rect _Rect, float _Health, float _Speed, float _Damage)
     {
-        base.Create(_Parent, _Rect, _FlyTo, _Health, _Speed, _Damage);
+        base.Create(_Rect, _Health, _Speed, _Damage);
 
         m_CreationTime = Time.time;
     }

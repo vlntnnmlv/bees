@@ -16,7 +16,7 @@ public class Test : MonoBehaviour
     [ExecuteAlways]
     void Start()
     {
-        m_Root.LocalRect = new Rect(-Utility.Size/2, Utility.Size);
+        m_Root.LocalRect = new Rect(-Utility.ScreenSize/2, Utility.ScreenSize);
 
         Node.Create("test", m_Root, new Rect(0, 0, 3.3f, 3.3f));
     }
@@ -24,9 +24,9 @@ public class Test : MonoBehaviour
     void OnGUI()
     {
         if (Button(0, 0, "Spawn Bee Worker"))
-            BeeWorker.Create("bee", null, new Rect(Vector2.zero, Vector2.one), Utility.RandomOffset);
+            CharacterManager.Instance.Create<BeeWorker>("bee", null, new Rect(Vector2.zero, Vector2.one));
         if (Button(0, 1, "Spawn Bee Player") && m_Player == null)
-            m_Player = BeePlayer.Create("bee", m_Root, new Rect(Vector2.zero, Vector2.one), Utility.RandomOffset);
+            m_Player = CharacterManager.Instance.Create<BeePlayer>("bee", m_Root, new Rect(Vector2.zero, Vector2.one));
         if (Button(0, 2, "Spawn Spider"))
             Spider.Create("spider", null, new Rect(Utility.RandomOffset, Vector2.one));
 
@@ -47,8 +47,7 @@ public class Test : MonoBehaviour
 
         if (Button(3, 0, "Test hit effects"))
         {
-            m_Player = BeePlayer.Create("bee", null, new Rect(Vector2.zero, Vector2.one),  Vector2.zero);
-
+            m_Player = CharacterManager.Instance.Create<BeePlayer>("bee", m_Root, new Rect(Vector2.zero, Vector2.one));
             m_TestingHitEffects = true;
         }
     }

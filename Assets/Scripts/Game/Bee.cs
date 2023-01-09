@@ -54,21 +54,9 @@ public abstract class Bee : Character
         m_DropHoneyPotCoroutine = StartCoroutine(DropHoneyPotCoroutine(_Dest));
     }
 
-    public void OnDied()
-    {
-        Destroy(gameObject, 0.0f);
-    }
-
     #endregion
 
     #region service methods
-
-    protected void Create(Node _Parent, Rect _Rect, Vector2 _FlyTo, float _Health, float _Speed, float _Damage)
-    {
-        base.Create(_Rect, _Health, _Speed, _Damage);
-
-        m_FlyTo = _FlyTo;
-    }
 
     protected override void Update()
     {
@@ -96,22 +84,6 @@ public abstract class Bee : Character
     #endregion
 
     #region coroutines
-
-    protected override IEnumerator AppearCoroutineInternal()
-    {
-        yield return StartCoroutine(FlyToPoint());
-    }
-
-    IEnumerator FlyToPoint()
-    {
-        Vector2 start = Offset;
-        yield return Coroutines.Update(
-            null,
-            _ => Direction = (m_FlyTo - start).normalized,
-            null,
-            Vector2.Distance(start, m_FlyTo) / Speed
-        );
-    }
 
     IEnumerator FloweringCoroutine(Flower _Flower)
     {
@@ -145,6 +117,9 @@ public abstract class Bee : Character
         tmpPot.RectTransform.rotation = m_Pot.RectTransform.rotation;
         tmpPot.Pivot = m_Pot.Pivot;
         Vector2  start  = tmpPot.Offset;
+        Paused = true;
+        GotHoney = false;
+        m_DropHoneyPotCoroutine = null;
 
         yield return StartCoroutine(Coroutines.Update(
                 () => GotHoney = false,

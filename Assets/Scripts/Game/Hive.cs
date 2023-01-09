@@ -4,19 +4,6 @@ using VN;
 
 public class Hive : Character
 {
-    #region creation
-
-    new public static Hive Create(string _ID, Node _Parent, Rect _Rect)
-    {
-        Hive hive = Utility.LoadObject<Hive>("Prefabs/Hive", _ID, _Parent);
-
-        hive.Create(_Rect, 250, 0, 0);
-
-        return hive;
-    }
-
-    #endregion
-
     #region constants
     const float POT_ICON_MARGIN = 0.3f;
 
@@ -44,7 +31,7 @@ public class Hive : Character
 
     protected override void Start()
     {
-        Flower.Create("flower", null, new Rect(VN.Utility.RandomGroundOffset, Vector2.one));
+        CharacterManager.Instance.Create<Flower>("flower", null, CharacterManager.RandomGroundRect);
 
         m_TimeFlowerSpawned = Time.time;
     }
@@ -59,7 +46,7 @@ public class Hive : Character
 
         if (Time.time - m_TimeFlowerSpawned > PeriodFlowerSpawn)
         {
-            Flower.Create("flower", null, new Rect( VN.Utility.RandomGroundOffset, Vector2.one));
+            CharacterManager.Instance.Create<Flower>("flower", null, CharacterManager.RandomGroundRect);
             m_TimeFlowerSpawned = Time.time;
         }
 
@@ -73,12 +60,12 @@ public class Hive : Character
                 AddHoneyPotsIcon();
                 if (m_HoneyPotsCount == 5)
                 {
-                    BeeWorker.Create($"bee_worker_{m_BeesCount}", this, LocalRect, VN.Utility.RandomOffset);
+                    BeeWorker.Create($"bee_worker_{m_BeesCount}", this, LocalRect);
                     m_BeesCount += 1;
                     ClearHoneyPotIcons();
                 }
 
-                Flower.Create("flower", null, new Rect( VN.Utility.RandomGroundOffset, Vector2.one));
+                CharacterManager.Instance.Create<Flower>("flower", null, CharacterManager.RandomGroundRect);
             }
         }
     }

@@ -1,11 +1,22 @@
 using UnityEngine;
-using System.Linq;
 using System.Collections;
 using VN;
 using TMPro;
 
 public class Character : Node, IMovable
 {
+    #region creation
+
+    public static T Create<T>(string _ID, Node _Parent, Rect _Rect, CharacterConfig _Config) where T : Character
+    {
+        T character = Utility.LoadObject<T>($"Prefabs/{_Config.PrefabName}", _ID, _Parent);
+
+        character.Create(_Rect, _Config.Health, _Config.Speed, _Config.Damage);
+        return character;
+    }
+
+    #endregion
+
     #region inner types
 
     public enum GroupType
@@ -83,7 +94,7 @@ public class Character : Node, IMovable
 
     #region service methods
 
-    protected void Create(Rect _Rect, float _Health, float _Speed, float _Damage)
+    protected virtual void Create(Rect _Rect, float _Health, float _Speed, float _Damage)
     {
         base.Create(_Rect);
 
@@ -159,15 +170,15 @@ public class Character : Node, IMovable
             Vector2 newOffset = Offset + Direction * Speed * Time.deltaTime;
             if (Constrainted)
             {
-                if (newOffset.x > Utility.Width/2)
-                    newOffset.x = -Utility.Width/2;
-                if (newOffset.x < -Utility.Width/2)
-                    newOffset.x = Utility.Width/2;
+                if (newOffset.x > Utility.ScreenWidth/2)
+                    newOffset.x = -Utility.ScreenWidth/2;
+                if (newOffset.x < -Utility.ScreenWidth/2)
+                    newOffset.x = Utility.ScreenWidth/2;
 
-                if (newOffset.y > Utility.Height/2)
-                    newOffset.y = -Utility.Height/2;
-                if (newOffset.y < -Utility.Height/2)
-                    newOffset.y = Utility.Height/2;
+                if (newOffset.y > Utility.ScreenHeight/2)
+                    newOffset.y = -Utility.ScreenHeight/2;
+                if (newOffset.y < -Utility.ScreenHeight/2)
+                    newOffset.y = Utility.ScreenHeight/2;
             }
 
             Offset = newOffset;
@@ -179,6 +190,11 @@ public class Character : Node, IMovable
             OnTurn(true);
     }
 
+    void OnTurn(bool _Left)
+    {
+        LocalScale = _Left ? new Vector2(-1, 1) : Vector2.one;
+    }
+
     void CreateHealthBar()
     {
         m_HealthBar = HealthBar.Create("HealthBar", this, Rect.zero);
@@ -187,11 +203,6 @@ public class Character : Node, IMovable
         m_HealthBar.Anchors = new Anchors(0, 1, 1.1f, 1.2f);
 
         m_HealthBar.Color = Group == GroupType.HOSTILE ? Color.red : Color.green;
-    }
-
-    void OnTurn(bool _Left)
-    {
-        LocalScale = _Left ? new Vector2(-1, 1) : Vector2.one;
     }
 
     #endregion
@@ -254,13 +265,13 @@ public class Character : Node, IMovable
         m_Appeared = true;
     }
 
-    protected virtual IEnumerator AppearCoroutineInternal()
+    protected IEnumerator AppearCoroutineInternal()
     {
         yield return Coroutines.Update(
             null,
             _Phase => LocalScale = Vector2.Lerp(Vector2.zero, Vector2.one, _Phase),
             null,
-            0.5f
+            0.25f
         );
     }
 
