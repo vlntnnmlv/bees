@@ -60,7 +60,7 @@ public class Hive : Character
                 AddHoneyPotsIcon();
                 if (m_HoneyPotsCount == 5)
                 {
-                    CharacterManager.Instance.Create<BeeWorker>($"bee_worker_{m_BeesCount}", this, LocalRect);
+                    CharacterManager.Instance.Create<BeeWorker>($"bee_worker_{m_BeesCount}", this, new Rect(0, 0, 1, 1));
                     m_BeesCount += 1;
                     ClearHoneyPotIcons();
                 }

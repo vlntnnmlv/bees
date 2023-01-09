@@ -67,7 +67,7 @@ public abstract class Bee : Character
         Flower[] flowers = FindObjectsOfType<Flower>();
         foreach (Flower flower in flowers)
         {
-            if (flower.CanBeUsed && !IsFlowering && !GotHoney && Vector2.Distance(Offset, flower.Offset) < 0.5f)
+            if (flower.CanBeUsed && !IsFlowering && !GotHoney && flower.WorldRect.Intersects(WorldRect))
                 DoFlowering(flower);
         }
     }
@@ -104,10 +104,15 @@ public abstract class Bee : Character
                     GotHoney = true;
                     m_Pot.LocalScale = Vector2.zero;
                     m_Pot.gameObject.SetActive(true);
+                    
                 },
                 _Phase => m_Pot.LocalScale = _Phase * Vector2.one,
-                () => m_SetHoneyPotCoroutine = null,
-                0.35f
+                () =>
+                {
+                    m_SetHoneyPotCoroutine = null;
+                    SoundMaker.PlaySound("pop", WorldOffset);
+                },
+                0.1f
             )
         );
     }
@@ -125,7 +130,7 @@ public abstract class Bee : Character
         Vector2  start  = tmpPot.WorldOffset;
 
         yield return StartCoroutine(Coroutines.Update(
-                null,
+                () => SoundMaker.PlaySound("pop", WorldOffset),
                 _Phase => tmpPot.WorldOffset = Vector2.Lerp(start, _Dest, _Phase),
                 null,
                 0.5f

@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     {
         m_Root.LocalRect = new Rect(-Utility.ScreenSize/2, Utility.ScreenSize);
 
-        m_Hive   = CharacterManager.Instance.Create<Hive>("hive", null, new Rect(0, 0, 1, 1));
+        m_Hive   = CharacterManager.Instance.Create<Hive>("hive", null, new Rect(0, 0, 2, 2));
         m_Player = CharacterManager.Instance.Create<BeePlayer>("BeePlayer", null, new Rect(0, 0, 1, 1));
     }
 
