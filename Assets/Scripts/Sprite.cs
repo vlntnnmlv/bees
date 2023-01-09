@@ -3,7 +3,7 @@ using System;
 namespace VN
 {
 
-[CreateAssetMenu(fileName = "Texture", menuName = "ScriptableObjects/SpawnMyTexture", order = 1)]
+[CreateAssetMenu(fileName = "Texture", menuName = "ScriptableObjects/SpawnSprite", order = 1)]
 [Serializable]
 public class Sprite : ScriptableObject
 {
